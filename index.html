@@ -389,34 +389,37 @@ function formatTime(seconds) {
 function sendToDiscord() {
   const totalSeconds = Math.round((Date.now() - appStartTime) / 1000);
   const avgSeconds = Math.round(questionTimes.reduce((a, b) => a + b, 0) / questionTimes.length);
+  const robloxUser = answers[0] || "Unknown";
 
-  let content = `TMP Phase 4 Examination Submission\n\n`;
-
-  content += `👤 Examinee Info:\n`;
+  let content = `**👤 Examinee Information**\n`;
   infoQuestions.forEach((q, i) => {
-    content += `${q} ${answers[i] || "No answer"}\n`;
+    content += `**${q}** ${answers[i] || "No answer"}\n`;
   });
 
-  content += `\n📝 Main Questions:\n`;
+  content += `\n**📝 Main Questions**\n`;
   mainQuestions.forEach((q, i) => {
     const answer = answers[infoQuestions.length + i] || "No answer";
-    content += `Q${i + 1}: ${q}\nA${i + 1}: ${answer}\n\n`;
+    content += `**Q${i + 1}:** ${q}\n**A:** ${answer}\n\n`;
   });
 
-  content += `⏱ Timing:\n`;
-  content += `Total time: ${formatTime(totalSeconds)}\n`;
-  content += `Avg per question: ${formatTime(avgSeconds)}\n`;
+  content += `\n**⏱ Timing**\n`;
+  content += `Total time: ${formatTime(totalSeconds)} | Avg per question: ${formatTime(avgSeconds)}`;
 
-  const blob = new Blob([content], { type: "text/plain" });
-  const formData = new FormData();
-  formData.append("file", blob, "TMP_Phase4_Examination.txt");
+  const payload = {
+    username: robloxUser,
+    content: content
+  };
 
   fetch(WORKER_URL, {
     method: "POST",
-    body: formData
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
   })
-  .then(() => console.log("Submission sent as text file!"))
-  .catch(e => console.error("Error:", e));
+  .then(res => {
+    if (res.ok) console.log("Examination submitted successfully!");
+    else console.error("Server error during submission.");
+  })
+  .catch(e => console.error("Connection Error:", e));
 }
 
 loadQuestion();
