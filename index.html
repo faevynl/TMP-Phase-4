@@ -7,84 +7,71 @@
 <style>
   body {
     font-family: "Segoe UI", sans-serif;
-    background-color: #2c2f33;
-    margin: 0;
+    background-color: #1e1e1e;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin: 0;
   }
+
   #app {
-    display: flex;
-    flex-direction: column;
     width: 100%;
-    max-width: 600px;
-    height: 80vh;
-    background-color: #36393f;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 0 25px rgba(0,0,0,0.5);
+    max-width: 500px;
   }
-  #container {
-    flex: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    overflow-y: auto;
-    background-color: #2f3136;
-  }
-  .bubble {
-    max-width: 80%;
-    padding: 12px 16px;
+
+  .question-card {
+    background-color: #000;
+    border: 2px solid #ff69b4; /* pink border */
     border-radius: 16px;
-    word-wrap: break-word;
+    padding: 20px;
+    color: #fff;
+    margin-bottom: 20px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    text-align: center;
   }
-  .question {
-    background-color: #7289da;
-    color: white;
-    align-self: flex-start;
-  }
-  .answer {
-    background-color: #4f545c;
-    color: white;
-    align-self: flex-end;
-  }
+
   #input-area {
     display: flex;
-    padding: 10px;
-    background-color: #202225;
-    gap: 8px;
+    gap: 10px;
   }
-  textarea {
+
+  #answer {
     flex: 1;
-    padding: 10px;
+    padding: 12px;
     border-radius: 12px;
-    border: none;
-    resize: none;
-    font-size: 14px;
-    background-color: #40444b;
-    color: white;
+    border: 2px solid #ff69b4;
+    background-color: #000;
+    color: #fff;
+    font-size: 16px;
   }
-  button {
-    background-color: #7289da;
-    color: white;
-    border: none;
+
+  #sendBtn {
+    padding: 12px 20px;
     border-radius: 12px;
-    padding: 10px 20px;
+    border: 2px solid #ff69b4;
+    background-color: #000;
+    color: #fff;
     cursor: pointer;
+    font-size: 16px;
   }
-  button:hover {
-    background-color: #5b6eae;
+
+  #sendBtn:hover {
+    background-color: #ff69b4;
+    color: #000;
   }
 </style>
 </head>
 <body>
 
 <div id="app">
-  <div id="container"></div>
+  <div id="question" class="question-card">Loading...</div>
   <div id="input-area">
-    <textarea id="answer" placeholder="Type your answer here" rows="2"></textarea>
+    <input type="text" id="answer" placeholder="Type your answer here">
     <button id="sendBtn">Send</button>
   </div>
 </div>
@@ -98,38 +85,31 @@ const questions = [
 ];
 
 let current = 0;
-const container = document.getElementById('container');
+
+const questionEl = document.getElementById('question');
 const answerEl = document.getElementById('answer');
 const sendBtn = document.getElementById('sendBtn');
 
-function showBubble(text, type='question') {
-  const div = document.createElement('div');
-  div.className = 'bubble ' + type;
-  div.innerText = text;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-}
-
 function loadQuestion() {
   if(current >= questions.length) {
-    showBubble("Application Submitted! Thank you.", "question");
+    questionEl.textContent = "Application Submitted! Thank you.";
     document.getElementById('input-area').style.display = 'none';
     return;
   }
-  showBubble(questions[current], 'question');
+  questionEl.textContent = questions[current];
   answerEl.value = '';
 }
 
 function nextQuestion() {
   const ans = answerEl.value.trim() || "No answer provided";
-  showBubble(ans, 'answer');
+  console.log(`Q${current+1}: ${ans}`); // Here you would send to Discord
   current++;
   loadQuestion();
 }
 
 sendBtn.addEventListener('click', nextQuestion);
 answerEl.addEventListener('keydown', (e) => {
-  if(e.key === 'Enter' && !e.shiftKey) {
+  if(e.key === 'Enter') {
     e.preventDefault();
     nextQuestion();
   }
