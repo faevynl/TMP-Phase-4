@@ -165,9 +165,11 @@ function loadQuestion() {
 }
 
 function nextQuestion() {
-  const ans = answerEl.value.trim() || (!isInfoStep ? "Failed to answer within the provided time limit." : "No answer provided");
+  const rawAnswer = answerEl.value.trim();
+  const ans = rawAnswer || (isInfoStep ? "No answer provided" : "Failed to answer within the provided time limit.");
   answers.push(ans);
   showBubble(ans, "answer");
+  answerEl.value = "";
   current++;
   loadQuestion();
 }
@@ -175,13 +177,32 @@ function nextQuestion() {
 function sendToDiscord() {
   const info = answers.slice(0, infoQuestions.length);
   const main = answers.slice(infoQuestions.length);
-  const content = `**Roblox Username:** ${info[0]}\n**Discord Username:** ${info[1]}\n**Discord ID:** ${info[2]}\n\n` +
-    main.map((a,i)=>`**Q${i+1}:** ${mainQuestions[i]}\n**A:** ${a}`).join("\n\n");
+
+  const infoFields = [
+    { name: "Roblox Username", value: info[0] || "No answer", inline: true },
+    { name: "Discord Username", value: info[1] || "No answer", inline: true },
+    { name: "Discord ID", value: info[2] || "No answer", inline: true }
+  ];
+
+  const mainFields = main.map((a, i) => ({
+    name: `Q${i+1}: ${mainQuestions[i]}`,
+    value: a || "No answer",
+  }));
+
+  const embed = {
+    title: "TMP Phase 4 Examination Submission",
+    color: 0x7289da,
+    fields: [...infoFields, ...mainFields],
+    timestamp: new Date().toISOString(),
+  };
+
   fetch(webhookURL, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({content:content})
-  }).then(r=>console.log("Sent")).catch(e=>console.error(e));
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ embeds: [embed] })
+  })
+  .then(r => console.log("Sent"))
+  .catch(e => console.error(e));
 }
 
 // Start
