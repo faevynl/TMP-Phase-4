@@ -7,22 +7,23 @@
 <style>
   body {
     font-family: "Segoe UI", sans-serif;
-    background-color: #36393f;
+    background-color: #2c2f33;
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    margin: 0;
+    height: 100vh;
   }
   #app {
     display: flex;
     flex-direction: column;
     width: 100%;
     max-width: 600px;
-    background-color: #2f3136;
+    height: 80vh;
+    background-color: #36393f;
     border-radius: 12px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.5);
     overflow: hidden;
+    box-shadow: 0 0 25px rgba(0,0,0,0.5);
   }
   #container {
     flex: 1;
@@ -31,32 +32,29 @@
     flex-direction: column;
     gap: 12px;
     overflow-y: auto;
-    max-height: 70vh;
+    background-color: #2f3136;
   }
   .bubble {
-    max-width: 90%;
+    max-width: 80%;
     padding: 12px 16px;
     border-radius: 16px;
-    line-height: 1.4;
     word-wrap: break-word;
   }
   .question {
     background-color: #7289da;
     color: white;
     align-self: flex-start;
-    border-bottom-left-radius: 4px;
   }
   .answer {
     background-color: #4f545c;
     color: white;
     align-self: flex-end;
-    border-bottom-right-radius: 4px;
   }
   #input-area {
     display: flex;
-    gap: 8px;
     padding: 10px;
     background-color: #202225;
+    gap: 8px;
   }
   textarea {
     flex: 1;
@@ -73,17 +71,11 @@
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 10px 16px;
+    padding: 10px 20px;
     cursor: pointer;
   }
   button:hover {
     background-color: #5b6eae;
-  }
-  #timer {
-    font-size: 12px;
-    color: #ff5555;
-    text-align: right;
-    padding: 0 10px 5px 10px;
   }
 </style>
 </head>
@@ -91,140 +83,61 @@
 
 <div id="app">
   <div id="container"></div>
-  <div id="timer"></div>
   <div id="input-area">
-    <textarea id="answer" rows="2" placeholder="Type your answer here"></textarea>
+    <textarea id="answer" placeholder="Type your answer here" rows="2"></textarea>
     <button id="sendBtn">Send</button>
   </div>
 </div>
 
 <script>
-const infoQuestions = [
+const questions = [
   "Enter your Roblox username:",
   "Enter your Discord username:",
-  "Enter your Discord ID:"
-];
-
-const mainQuestions = [
-  "You observe a Soldier wearing an Advisor mask and armband randomly killing a player in a restricted area they were not assigned to guard, while a Manager watches and fails to intervene.",
-  "A VIP is using the :char command to appear as a Manager and is attempting to give orders to Workers during a tryout.",
-  "A staff member submits a report clip of a player no-clipping, but the username is not visible in the footage.",
-  "Describe the 'Authority Inheritance' protocol for a Sentry guarding a Supreme Rank. If a Sentry is guarding the Frontman, what authority do they possess over other staff members, and when is it valid?",
-  "In Round 2 of a Soldier Evaluation (Outscore 9), an attendee finishes with 1250 Damage, a 1:1 KDR, and 450 heals. Do they pass?",
-  "Write the exact sequence of commands to protect your tryoutees, identify flying exploiters, and the specific ban format for a user named 'RaidLeader123'.",
-  "Identify the rank requirements for a Section Leader, a Platoon CO, and Company Leadership.",
-  "During a Merit Department promotion wave, what are the specific restrictions regarding the discussion of Managers on Trial? Additionally, what is the mandatory evidence requirement for any individual being considered for a promotion to Supervisor or higher?",
-  "Type a batch command string that gives you a sword, waits 5 seconds, announces 'Event Starting' to the server, and teleports all players on the 'Tryoutee' team to you.",
-  "Contrast the primary roles of the Community Department and the Justice Department.",
-  "Does High Command have authority over Sentry or Rangers? How do you report an infraction by a member of these divisions, and how do you identify 'stolen valor' using their mask ranks?",
-  "Explain the specific regulations regarding VIP Vitality commands (e.g., :god) when a VIP intends to enter combat. What are the two conditions they must satisfy before engaging an armed opponent, and can they leave the VIP room while godded?",
-  "Contrast the first-offense punishment for Corruption versus Insubordination for a Soldier. Who has the final authority on permanent blacklists?",
-  "Explain the first three steps of the I STAFF method. What is the impact of being placed on Zero Tolerance?"
+  "Enter your Discord ID:",
+  "Why do you want to join?"
 ];
 
 let current = 0;
-let answers = [];
-let isInfoStep = true;
-let timeLeft = 120;
-let timerInterval;
+const container = document.getElementById('container');
+const answerEl = document.getElementById('answer');
+const sendBtn = document.getElementById('sendBtn');
 
-const container = document.getElementById("container");
-const answerEl = document.getElementById("answer");
-const timerEl = document.getElementById("timer");
-const sendBtn = document.getElementById("sendBtn");
-const webhookURL = "https://discord.com/api/webhooks/1487192982082949120/sVQ2wN2UB1oHlbqRtpjaOYUd6itFrHZe6dIbp1ireheQQYCnb4wQEPtHdmAf35UXKUPb";
-
-function showBubble(text, type="question") {
-  const div = document.createElement("div");
-  div.className = `bubble ${type}`;
+function showBubble(text, type='question') {
+  const div = document.createElement('div');
+  div.className = 'bubble ' + type;
   div.innerText = text;
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
 }
 
-function startTimer() {
-  clearInterval(timerInterval);
-  timeLeft = 120;
-  timerEl.innerText = `Time left: ${timeLeft}s`;
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    timerEl.innerText = `Time left: ${timeLeft}s`;
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      answers.push("Failed to answer within the provided time limit.");
-      showBubble("Failed to answer within the provided time limit.", "answer");
-      nextQuestion();
-    }
-  }, 1000);
-}
-
 function loadQuestion() {
-  const questions = isInfoStep ? infoQuestions : mainQuestions;
-  if (current >= questions.length) {
-    if (isInfoStep) {
-      isInfoStep = false;
-      current = 0;
-      loadQuestion();
-      return;
-    } else {
-      submitDiscord();
-      showBubble("Application Submitted! Thank you.", "question");
-      document.getElementById("input-area").style.display = "none";
-      timerEl.innerText = "";
-      return;
-    }
+  if(current >= questions.length) {
+    showBubble("Application Submitted! Thank you.", "question");
+    document.getElementById('input-area').style.display = 'none';
+    return;
   }
-  showBubble(questions[current], "question");
-  answerEl.value = "";
-  if (!isInfoStep) startTimer();
-  else timerEl.innerText = "";
+  showBubble(questions[current], 'question');
+  answerEl.value = '';
 }
 
 function nextQuestion() {
-  clearInterval(timerInterval);
-  const ans = answerEl.value.trim() || (isInfoStep ? "No answer provided" : "Failed to answer within the provided time limit.");
-  answers.push(ans);
-  showBubble(ans, "answer");
+  const ans = answerEl.value.trim() || "No answer provided";
+  showBubble(ans, 'answer');
   current++;
   loadQuestion();
 }
 
-function submitDiscord() {
-  const info = answers.slice(0, infoQuestions.length);
-  const main = answers.slice(infoQuestions.length);
+sendBtn.addEventListener('click', nextQuestion);
+answerEl.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    nextQuestion();
+  }
+});
 
-  const infoFields = [
-    { name: "Roblox Username", value: info[0] || "No answer", inline: true },
-    { name: "Discord Username", value: info[1] || "No answer", inline: true },
-    { name: "Discord ID", value: info[2] || "No answer", inline: true }
-  ];
-
-  const mainFields = main.map((a,i)=>({
-    name: `Q${i+1}: ${mainQuestions[i]}`,
-    value: a || "No answer"
-  }));
-
-  const embed = {
-    title: "TMP Phase 4 Examination Submission",
-    color: 0x7289da,
-    fields: [...infoFields, ...mainFields],
-    timestamp: new Date().toISOString()
-  };
-
-  fetch(webhookURL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({embeds:[embed]})
-  })
-  .then(r=>console.log("Sent"))
-  .catch(e=>console.error(e));
-}
-
-// Attach button event listener
-sendBtn.addEventListener("click", nextQuestion);
-
-// Start the first question
+// Start
 loadQuestion();
 </script>
+
 </body>
 </html>
