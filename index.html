@@ -5,116 +5,285 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TMP Phase 4 Examination</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500&display=swap');
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
-    font-family: "Segoe UI", sans-serif;
-    background-color: #1e1e1e;
+    font-family: 'Inter', sans-serif;
+    background-color: #0a0a0a;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(255, 105, 180, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(0, 220, 255, 0.07) 0%, transparent 60%);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
+    padding: 24px;
   }
-  #app { width: 100%; max-width: 540px; }
 
-  .notice-card {
-    background-color: #1a1a2e;
-    border: 2px solid #ff69b4;
+  #app {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #0d0d0d, #111);
+    border: 1px solid rgba(255, 105, 180, 0.3);
     border-radius: 16px;
-    padding: 14px 18px;
-    color: #ccc;
-    font-size: 13px;
-    text-align: center;
-    margin-bottom: 12px;
-    line-height: 1.6;
+    position: relative;
+    overflow: hidden;
   }
-  .notice-card strong { color: #ff69b4; }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ff69b4, #00dcff, #ff69b4);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  .header-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid rgba(255,105,180,0.4);
+  }
+  .header-logo-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ff69b4, #00dcff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .header-text { flex: 1; }
+  .header-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+  .header-subtitle {
+    font-size: 12px;
+    color: #00dcff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
 
+  /* Notice */
+  .notice-card {
+    background: linear-gradient(135deg, rgba(0,220,255,0.05), rgba(255,105,180,0.05));
+    border: 1px solid rgba(0, 220, 255, 0.25);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: #99b4c0;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.6;
+    transition: opacity 0.5s, max-height 0.5s;
+    overflow: hidden;
+    max-height: 100px;
+  }
+  .notice-card.hidden {
+    opacity: 0;
+    max-height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+  .notice-card strong { color: #00dcff; }
+
+  /* Meta row */
   .meta-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
   }
-  .progress { color: #aaa; font-size: 13px; }
-  .timer { font-size: 13px; color: #aaa; }
-  .timer.warning { color: #ff4444; font-weight: bold; }
+  .progress {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: #ff69b4;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .timer {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #00dcff;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .timer.warning { color: #ff4444; animation: pulse 0.8s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
+  /* Progress bar */
+  .progress-bar-track {
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff69b4, #00dcff);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* Question card */
   .question-card {
-    background-color: #000;
-    border: 2px solid #ff69b4;
+    background: #0d0d0d;
+    border: 1px solid rgba(255, 105, 180, 0.3);
     border-radius: 16px;
-    padding: 24px 20px;
-    color: #fff;
-    margin-bottom: 14px;
-    min-height: 90px;
+    padding: 28px 24px;
+    color: #f0f0f0;
+    min-height: 110px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 15px;
     text-align: center;
-    line-height: 1.6;
+    line-height: 1.7;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(255, 105, 180, 0.05);
+  }
+  .question-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,220,255,0.4), transparent);
   }
 
+  /* Input area */
   #input-area { display: flex; gap: 10px; }
   #answer {
     flex: 1;
-    padding: 12px 14px;
+    padding: 13px 16px;
     border-radius: 12px;
-    border: 2px solid #ff69b4;
-    background-color: #000;
+    border: 1px solid rgba(255, 105, 180, 0.35);
+    background: #0d0d0d;
     color: #fff;
     font-size: 15px;
+    font-family: 'Inter', sans-serif;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  #answer:focus { border-color: #ff9fd4; }
+  #answer::placeholder { color: #444; }
+  #answer:focus {
+    border-color: #00dcff;
+    box-shadow: 0 0 0 3px rgba(0, 220, 255, 0.08);
+  }
   #sendBtn {
-    padding: 12px 20px;
+    padding: 13px 22px;
     border-radius: 12px;
-    border: 2px solid #ff69b4;
-    background-color: #000;
+    border: 1px solid rgba(255, 105, 180, 0.5);
+    background: linear-gradient(135deg, rgba(255,105,180,0.12), rgba(0,220,255,0.08));
     color: #fff;
     cursor: pointer;
-    font-size: 15px;
-    transition: background-color 0.2s, color 0.2s;
+    font-size: 14px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.2s;
     white-space: nowrap;
   }
-  #sendBtn:hover { background-color: #ff69b4; color: #000; }
+  #sendBtn:hover {
+    background: linear-gradient(135deg, #ff69b4, #00dcff);
+    border-color: transparent;
+    color: #000;
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+  }
 
+  /* Done card */
   .done-card {
-    background-color: #000;
-    border: 2px solid #ff69b4;
+    background: #0d0d0d;
+    border: 1px solid rgba(0, 220, 255, 0.3);
     border-radius: 16px;
-    padding: 32px 24px;
+    padding: 40px 28px;
     color: #fff;
     text-align: center;
-    font-size: 16px;
-    line-height: 1.9;
+    font-size: 15px;
+    line-height: 2;
+    box-shadow: 0 0 40px rgba(0, 220, 255, 0.05);
   }
-  .done-card span { color: #ff69b4; font-weight: bold; }
+  .done-card .check { font-size: 36px; display: block; margin-bottom: 12px; }
+  .done-card .done-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    background: linear-gradient(90deg, #ff69b4, #00dcff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+  }
+  .done-card .done-sub { color: #666; font-size: 13px; margin-top: 8px; }
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="notice-card">
+
+  <div class="header">
+    <div class="header-logo-placeholder" id="logoEl">⚔️</div>
+    <div class="header-text">
+      <div class="header-title">TMP EXAMINATION</div>
+      <div class="header-subtitle">Phase 4 · Written Assessment</div>
+    </div>
+  </div>
+
+  <div class="notice-card" id="notice">
     <strong>📋 Data Notice</strong><br>
     Your answers will be submitted to TMP staff via Discord for review. By completing this examination, you consent to your responses being stored and reviewed by TMP staff.
   </div>
+
   <div class="meta-row">
     <div class="progress" id="progress"></div>
     <div class="timer" id="timer"></div>
   </div>
+
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+  </div>
+
   <div id="question" class="question-card">Loading...</div>
+
   <div id="input-area">
-    <input type="text" id="answer" placeholder="Type your answer here">
+    <input type="text" id="answer" placeholder="Type your answer here...">
     <button id="sendBtn">Submit</button>
   </div>
+
 </div>
 
 <script>
 const WORKER_URL = "https://server.yyourmom96.workers.dev";
 const TIME_LIMIT = 120;
+const LOGO_URL = "https://imgur.com/a/eGvjGXh";
 
 const infoQuestions = [
   "Enter your Roblox username:",
@@ -153,6 +322,16 @@ const answerEl = document.getElementById('answer');
 const sendBtn = document.getElementById('sendBtn');
 const progressEl = document.getElementById('progress');
 const timerEl = document.getElementById('timer');
+const progressBar = document.getElementById('progressBar');
+const noticeEl = document.getElementById('notice');
+const logoEl = document.getElementById('logoEl');
+
+if (LOGO_URL && !LOGO_URL.includes('https://imgur.com/a/eGvjGXh')) {
+  const img = document.createElement('img');
+  img.src = LOGO_URL;
+  img.className = 'header-logo';
+  logoEl.replaceWith(img);
+}
 
 sendBtn.addEventListener('click', () => nextQuestion(false));
 answerEl.addEventListener('keydown', e => {
@@ -185,15 +364,26 @@ function loadQuestion() {
     clearInterval(timerInterval);
     timerEl.style.display = 'none';
     progressEl.style.display = 'none';
+    progressBar.parentElement.style.display = 'none';
     document.getElementById('input-area').style.display = 'none';
+    noticeEl.classList.add('hidden');
     questionEl.className = 'done-card';
-    questionEl.innerHTML = `✅ Examination Submitted!<br><br><span>Thank you.</span><br>Your answers have been sent to TMP staff for review.`;
+    questionEl.innerHTML = `
+      <span class="check">✅</span>
+      <div class="done-title">Examination Submitted</div>
+      <div class="done-sub">Your answers have been sent to TMP staff for review.</div>
+    `;
     sendToDiscord();
     return;
   }
 
+  if (current === 1) noticeEl.classList.add('hidden');
+
+  const pct = (current / allQuestions.length) * 100;
+  progressBar.style.width = pct + '%';
+
   timerEl.style.display = current >= infoQuestions.length ? 'block' : 'none';
-  progressEl.textContent = `Question ${current + 1} of ${allQuestions.length}`;
+  progressEl.textContent = `Question ${current + 1} / ${allQuestions.length}`;
   questionEl.textContent = allQuestions[current];
   answerEl.value = '';
   answerEl.focus();
@@ -259,19 +449,19 @@ function sendToDiscord() {
     chunks.push(allFields.slice(i, i + 25));
   }
 
-const embeds = chunks.map((fields, i) => {
-  const embed = {
-    title: i === 0 ? "📋 TMP Phase 4 Examination" : "📋 TMP Phase 4 Examination (cont.)",
-    color: 0xff69b4,
-    fields
-  };
-  if (i === 0) embed.thumbnail = { url: "https://imgur.com/a/eGvjGXh" };
-  if (i === chunks.length - 1) {
-    embed.footer = { text: "TMP Phase 4 Examination System" };
-    embed.timestamp = new Date().toISOString();
-  }
-  return embed;
-});
+  const embeds = chunks.map((fields, i) => {
+    const embed = {
+      title: i === 0 ? "📋 TMP Phase 4 Examination" : "📋 TMP Phase 4 Examination (cont.)",
+      color: 0xff69b4,
+      fields
+    };
+    if (i === 0) embed.thumbnail = { url: "https://i.imgur.com/ihvdd1.png" };
+    if (i === chunks.length - 1) {
+      embed.footer = { text: "TMP Phase 4 Examination" };
+      embed.timestamp = new Date().toISOString();
+    }
+    return embed;
+  });
 
   const embedBatches = [];
   for (let i = 0; i < embeds.length; i += 10) {
