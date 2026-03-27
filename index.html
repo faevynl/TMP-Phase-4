@@ -392,15 +392,18 @@ function sendToDiscord() {
     : "Unknown User";
   
   const infoLabels = ["Roblox username", "Discord username", "Discord ID"];
-  let content = `# 👤 **Examinee Information**\n`;
+  let content = `# 👤 **Examinee Info**\n`;
   
-  infoLabels.forEach((label, i) => {
-    content += `**${label}:** ${answers[i] || "N/A"}\n\n`;
-  });
+  for (let i = 0; i < infoLabels.length; i++) {
+    content += `**${infoLabels[i]}:** ${answers[i] || "N/A"}\n\n`;
+  }
 
   content += `# ➡️ **Responses**\n\n`;
+  
   mainQuestions.forEach((q, i) => {
-    const answer = answers[infoQuestions.length + i] || "Failure to provide an answer within the time limit.";
+    const answerIndex = infoQuestions.length + i;
+    const answer = answers[answerIndex] || "Failure to provide an answer within the time limit.";
+    
     content += `**Q${i+1}:** ${q}\n────────────\n${answer}\n\n`;
   });
 
