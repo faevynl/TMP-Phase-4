@@ -5,37 +5,116 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TMP Phase 4 Examination</title>
 <style>
-  body { font-family: "Segoe UI", sans-serif; background-color: #1e1e1e; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-  #app { width: 100%; max-width: 500px; }
-  .notice-card { background-color: #1a1a2e; border: 2px solid #ff69b4; border-radius: 16px; padding: 16px 20px; color: #ccc; font-size: 13px; text-align: center; margin-bottom: 14px; line-height: 1.5; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background-color: #1e1e1e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  #app { width: 100%; max-width: 540px; }
+
+  .notice-card {
+    background-color: #1a1a2e;
+    border: 2px solid #ff69b4;
+    border-radius: 16px;
+    padding: 14px 18px;
+    color: #ccc;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
   .notice-card strong { color: #ff69b4; }
-  .progress { color: #aaa; font-size: 13px; text-align: right; margin-bottom: 4px; }
-  .timer { font-size: 13px; text-align: right; margin-bottom: 8px; color: #aaa; }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .progress { color: #aaa; font-size: 13px; }
+  .timer { font-size: 13px; color: #aaa; }
   .timer.warning { color: #ff4444; font-weight: bold; }
-  .question-card { background-color: #000; border: 2px solid #ff69b4; border-radius: 16px; padding: 20px; color: #fff; margin-bottom: 16px; min-height: 80px; display: flex; align-items: center; justify-content: center; font-size: 16px; text-align: center; line-height: 1.5; }
+
+  .question-card {
+    background-color: #000;
+    border: 2px solid #ff69b4;
+    border-radius: 16px;
+    padding: 24px 20px;
+    color: #fff;
+    margin-bottom: 14px;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
   #input-area { display: flex; gap: 10px; }
-  #answer { flex: 1; padding: 12px; border-radius: 12px; border: 2px solid #ff69b4; background-color: #000; color: #fff; font-size: 16px; }
-  #sendBtn { padding: 12px 20px; border-radius: 12px; border: 2px solid #ff69b4; background-color: #000; color: #fff; cursor: pointer; font-size: 16px; }
+  #answer {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 2px solid #ff69b4;
+    background-color: #000;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #answer:focus { border-color: #ff9fd4; }
+  #sendBtn {
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 2px solid #ff69b4;
+    background-color: #000;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
   #sendBtn:hover { background-color: #ff69b4; color: #000; }
+
+  .done-card {
+    background-color: #000;
+    border: 2px solid #ff69b4;
+    border-radius: 16px;
+    padding: 32px 24px;
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.9;
+  }
+  .done-card span { color: #ff69b4; font-weight: bold; }
 </style>
 </head>
 <body>
 <div id="app">
   <div class="notice-card">
-    <strong>📋 Notice</strong><br>
-    Your answers will be submitted to TMP staff via Discord for review. By completing this form, you consent to your responses being stored and reviewed by TMP staff.
+    <strong>📋 Data Notice</strong><br>
+    Your answers will be submitted to TMP staff via Discord for review. By completing this examination, you consent to your responses being stored and reviewed by TMP staff.
   </div>
-  <div class="progress" id="progress"></div>
-  <div class="timer" id="timer"></div>
+  <div class="meta-row">
+    <div class="progress" id="progress"></div>
+    <div class="timer" id="timer"></div>
+  </div>
   <div id="question" class="question-card">Loading...</div>
   <div id="input-area">
     <input type="text" id="answer" placeholder="Type your answer here">
-    <button id="sendBtn">Send</button>
+    <button id="sendBtn">Submit</button>
   </div>
 </div>
+
 <script>
 const WORKER_URL = "https://server.yyourmom96.workers.dev";
-const TIME_LIMIT = 120; // seconds
+const TIME_LIMIT = 120;
 
 const infoQuestions = [
   "Enter your Roblox username:",
@@ -65,6 +144,9 @@ let current = 0;
 const answers = [];
 let timerInterval = null;
 let secondsLeft = TIME_LIMIT;
+let appStartTime = Date.now();
+let questionStartTime = Date.now();
+let questionTimes = [];
 
 const questionEl = document.getElementById('question');
 const answerEl = document.getElementById('answer');
@@ -94,7 +176,7 @@ function startTimer() {
 function updateTimerDisplay() {
   const mins = Math.floor(secondsLeft / 60);
   const secs = secondsLeft % 60;
-  timerEl.textContent = `⏱ Time remaining: ${mins}:${secs.toString().padStart(2, '0')}`;
+  timerEl.textContent = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`;
   timerEl.className = 'timer' + (secondsLeft <= 30 ? ' warning' : '');
 }
 
@@ -102,20 +184,34 @@ function loadQuestion() {
   if (current >= allQuestions.length) {
     clearInterval(timerInterval);
     timerEl.style.display = 'none';
-    questionEl.textContent = "✅ Examination Submitted! Thank you. Your answers have been sent to TMP staff.";
-    document.getElementById('input-area').style.display = 'none';
     progressEl.style.display = 'none';
+    document.getElementById('input-area').style.display = 'none';
+    questionEl.className = 'done-card';
+    questionEl.innerHTML = `✅ Examination Submitted!<br><br><span>Thank you.</span><br>Your answers have been sent to TMP staff for review.`;
     sendToDiscord();
     return;
   }
+
+  // Show timer only for main questions
+  timerEl.style.display = current >= infoQuestions.length ? 'block' : 'none';
   progressEl.textContent = `Question ${current + 1} of ${allQuestions.length}`;
   questionEl.textContent = allQuestions[current];
   answerEl.value = '';
   answerEl.focus();
-  startTimer();
+  questionStartTime = Date.now();
+
+  if (current >= infoQuestions.length) {
+    startTimer();
+  } else {
+    clearInterval(timerInterval);
+  }
 }
 
 function nextQuestion(timedOut) {
+  const timeSpent = Math.round((Date.now() - questionStartTime) / 1000);
+  if (current >= infoQuestions.length) {
+    questionTimes.push(timedOut ? TIME_LIMIT : Math.min(timeSpent, TIME_LIMIT));
+  }
   const ans = timedOut || answerEl.value.trim() === ''
     ? "Failure to provide an answer within the time limit."
     : answerEl.value.trim();
@@ -124,23 +220,41 @@ function nextQuestion(timedOut) {
   loadQuestion();
 }
 
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
 function sendToDiscord() {
-  const infoFields = infoQuestions.map((q, i) => ({
-    name: q,
-    value: answers[i] || "No answer",
-    inline: false
-  }));
+  const totalSeconds = Math.round((Date.now() - appStartTime) / 1000);
+  const avgSeconds = Math.round(questionTimes.reduce((a, b) => a + b, 0) / questionTimes.length);
+
+  const infoValue = infoQuestions.map((q, i) => `**${q}** ${answers[i] || "No answer"}`).join("\n");
 
   const mainFields = mainQuestions.map((q, i) => ({
-    name: `Q${i + 1}: ${q.substring(0, 100)}${q.length > 100 ? '...' : ''}`,
-    value: answers[infoQuestions.length + i] || "No answer",
+    name: `Question ${i + 1}`,
+    value: `**Q:** ${q}\n**A:** ${answers[infoQuestions.length + i] || "No answer"}`,
     inline: false
   }));
 
   const embed = {
-    title: "TMP Phase 4 Examination Submission",
+    title: "📋 TMP Phase 4 Examination",
     color: 0xff69b4,
-    fields: [...infoFields, ...mainFields],
+    fields: [
+      {
+        name: "━━━━━━━━━━ Examinee Info ━━━━━━━━━━",
+        value: infoValue,
+        inline: false
+      },
+      ...mainFields,
+      {
+        name: "━━━━━━━━━━ Timing ━━━━━━━━━━",
+        value: `**Total time:** ${formatTime(totalSeconds)}\n**Average time per question:** ${formatTime(avgSeconds)}`,
+        inline: false
+      }
+    ],
+    footer: { text: "TMP Phase 4 Examination System" },
     timestamp: new Date().toISOString()
   };
 
