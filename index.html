@@ -24,6 +24,8 @@
     background-color: #2f3136;
     border-radius: 12px;
     box-shadow: 0 0 25px rgba(0,0,0,0.5);
+    overflow-y: auto;
+    max-height: 80vh;
   }
   .bubble {
     max-width: 90%;
@@ -49,6 +51,7 @@
     display: flex;
     gap: 8px;
     margin-top: 10px;
+    width: 100%;
   }
   textarea {
     flex: 1;
@@ -110,14 +113,15 @@ const mainQuestions = [
 ];
 
 let current = 0;
-let timeLeft = 120;
 let answers = [];
 let isInfoStep = true;
+let timeLeft = 120;
 let timerInterval;
 const webhookURL = "https://discord.com/api/webhooks/1487192982082949120/sVQ2wN2UB1oHlbqRtpjaOYUd6itFrHZe6dIbp1ireheQQYCnb4wQEPtHdmAf35UXKUPb";
+
 const container = document.getElementById("container");
-const timerEl = document.getElementById("timer");
 const answerEl = document.getElementById("answer");
+const timerEl = document.getElementById("timer");
 
 function showBubble(text, type="question") {
   const div = document.createElement("div");
@@ -128,8 +132,8 @@ function showBubble(text, type="question") {
 }
 
 function loadQuestion() {
-  let questionArray = isInfoStep ? infoQuestions : mainQuestions;
-  if (current >= questionArray.length) {
+  const questions = isInfoStep ? infoQuestions : mainQuestions;
+  if (current >= questions.length) {
     if (isInfoStep) {
       isInfoStep = false;
       current = 0;
@@ -144,32 +148,40 @@ function loadQuestion() {
       return;
     }
   }
-  showBubble(questionArray[current], "question");
+
+  showBubble(questions[current], "question");
   answerEl.value = "";
+
   if (!isInfoStep) {
-    timeLeft = 120;
-    timerEl.innerText = `Time left: ${timeLeft}s`;
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      timerEl.innerText = `Time left: ${timeLeft}s`;
-      if (timeLeft <= 0) {
-        answers.push("Failed to answer within the provided time limit.");
-        current++;
-        loadQuestion();
-      }
-    }, 1000);
+    startTimer();
   } else {
     timerEl.innerText = "";
   }
 }
 
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 120;
+  timerEl.innerText = `Time left: ${timeLeft}s`;
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerEl.innerText = `Time left: ${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      answers.push("Failed to answer within the provided time limit.");
+      showBubble("Failed to answer within the provided time limit.", "answer");
+      current++;
+      loadQuestion();
+    }
+  }, 1000);
+}
+
 function nextQuestion() {
+  clearInterval(timerInterval);
   const rawAnswer = answerEl.value.trim();
   const ans = rawAnswer || (isInfoStep ? "No answer provided" : "Failed to answer within the provided time limit.");
   answers.push(ans);
   showBubble(ans, "answer");
-  answerEl.value = "";
   current++;
   loadQuestion();
 }
@@ -184,26 +196,27 @@ function sendToDiscord() {
     { name: "Discord ID", value: info[2] || "No answer", inline: true }
   ];
 
-  const mainFields = main.map((a, i) => ({
+  const mainFields = main.map((a,i)=>({
     name: `Q${i+1}: ${mainQuestions[i]}`,
-    value: a || "No answer",
+    value: a || "No answer"
   }));
 
   const embed = {
     title: "TMP Phase 4 Examination Submission",
-    color: #ff004c,
+    color: 0x7289da,
     fields: [...infoFields, ...mainFields],
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString()
   };
 
-  fetch(webhookURL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ embeds: [embed] })
+  fetch(webhookURL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({embeds:[embed]})
   })
-    .then(r => console.log("Sent"))
-    .catch(e => console.error(e));
+  .then(r=>console.log("Sent"))
+  .catch(e=>console.error(e));
 }
+
 loadQuestion();
 </script>
 </body>
