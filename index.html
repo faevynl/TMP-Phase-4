@@ -387,21 +387,21 @@ function formatTime(seconds) {
 }
 
 function sendToDiscord() {
-  const robloxUser = answers[0] && answers[0] !== "Failure to provide an answer." 
+  const robloxUser = answers[0] && answers[0] !== "Failure to provide an answer within the time limit." 
     ? answers[0] 
     : "Unknown User";
   
   const infoLabels = ["Roblox username", "Discord username", "Discord ID"];
-  let content = `# 👤 **Examinee Info**\n`;
+  let content = `# 👤 **Examinee Information**\n`;
   
   infoLabels.forEach((label, i) => {
     content += `**${label}:** ${answers[i] || "N/A"}\n\n`;
   });
 
-  content += `➡️ **Responses**\n`;
+  content += `# ➡️ **Responses**\n\n`;
   mainQuestions.forEach((q, i) => {
     const answer = answers[infoQuestions.length + i] || "Failure to provide an answer within the time limit.";
-    content += `**Q${i+1}:** ${q}\n**A:** ${answer}\n\n`;
+    content += `**Q${i+1}:** ${q}\n────────────\n${answer}\n\n`;
   });
 
   const payload = {
