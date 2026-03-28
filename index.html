@@ -88,10 +88,8 @@
     text-align: center;
     line-height: 1.6;
     transition: all 0.5s;
-    overflow: hidden;
   }
-  .notice-card.hidden { opacity: 0; max-height: 0; padding: 0; margin: 0; border: none; }
-  .notice-card strong { color: #00dcff; }
+  .notice-card.hidden { opacity: 0; max-height: 0; padding: 0; margin: 0; border: none; overflow: hidden; }
 
   .meta-row { display: flex; justify-content: space-between; align-items: center; }
   .progress {
@@ -107,23 +105,20 @@
     font-weight: 700;
     font-size: 15px;
     color: #00dcff;
-    letter-spacing: 1px;
     display: none;
   }
-  .timer.warning { color: #ff4444; animation: pulse 0.8s ease-in-out infinite; }
+  .timer.warning { color: #ff4444; animation: pulse 0.8s infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
   .progress-bar-track {
-    width: 100%;
-    height: 3px;
+    width: 100%; height: 3px;
     background: rgba(255,255,255,0.08);
     border-radius: 2px;
     overflow: hidden;
   }
   .progress-bar-fill {
-    height: 100%;
+    height: 100%; width: 0%;
     background: linear-gradient(90deg, #ff69b4, #00dcff);
-    border-radius: 2px;
     transition: width 0.4s ease;
   }
 
@@ -131,52 +126,55 @@
     background: #0d0d0d;
     border: 1px solid rgba(255, 105, 180, 0.3);
     border-radius: 16px;
-    padding: 28px 24px;
+    padding: 40px 24px;
     color: #f0f0f0;
-    min-height: 110px;
+    min-height: 160px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
     text-align: center;
-    line-height: 1.7;
-    position: relative;
-    overflow: hidden;
     box-shadow: 0 0 30px rgba(255, 105, 180, 0.05);
   }
 
-  #input-area { display: none; gap: 10px; }
+  #input-area { display: none; gap: 10px; margin-top: 10px; }
   #answer {
-    flex: 1;
-    padding: 13px 16px;
-    border-radius: 12px;
+    flex: 1; padding: 13px 16px; border-radius: 12px;
     border: 1px solid rgba(255, 105, 180, 0.35);
-    background: #0d0d0d;
-    color: #fff;
-    font-size: 15px;
-    outline: none;
+    background: #0d0d0d; color: #fff; outline: none;
   }
-  #sendBtn, .action-btn {
-    padding: 13px 22px;
+
+  .action-btn {
+    padding: 14px 28px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 105, 180, 0.5);
-    background: linear-gradient(135deg, rgba(255,105,180,0.12), rgba(0,220,255,0.08));
-    color: #fff;
+    border: 1px solid rgba(0, 220, 255, 0.5);
+    background: rgba(0, 220, 255, 0.1);
+    color: #00dcff;
     cursor: pointer;
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    transition: all 0.2s;
+    transition: all 0.3s;
   }
-  #sendBtn:hover, .action-btn:hover {
-    background: linear-gradient(135deg, #ff69b4, #00dcff);
-    color: #000;
+  .action-btn:hover {
+    background: #00dcff; color: #000;
+    box-shadow: 0 0 20px rgba(0, 220, 255, 0.4);
+  }
+  .start-btn {
+    border-color: rgba(255, 105, 180, 0.5);
+    background: rgba(255, 105, 180, 0.1);
+    color: #ff69b4;
+  }
+  .start-btn:hover {
+    background: #ff69b4; color: #000;
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.4);
   }
 
-  .done-card { text-align: center; line-height: 2; padding: 40px 20px; }
-  .check { font-size: 40px; display: block; margin-bottom: 10px; }
+  #sendBtn {
+    padding: 13px 22px; border-radius: 12px; border: 1px solid #ff69b4;
+    background: transparent; color: #fff; cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -186,27 +184,27 @@
     <img src="https://i.imgur.com/mWDOZI5.png" class="header-logo" alt="Logo">
     <div class="header-text">
       <div class="header-title">TMP EXAMINATION</div>
-      <div class="header-subtitle">Phase 4 · Verified Assessment</div>
+      <div class="header-subtitle">Phase 4 · Written Assessment</div>
     </div>
   </div>
 
   <div class="notice-card" id="notice">
     <strong>Verification Required</strong><br>
-    You must link your Discord account to begin this examination.
+    Click below to link your Discord account. This is required to start.
   </div>
 
   <div class="meta-row">
-    <div class="progress" id="progress">Ready to Start</div>
-    <div class="timer" id="timer">⏱ 0:00</div>
+    <div class="progress" id="progress">Awaiting Link...</div>
+    <div class="timer" id="timer">⏱ 2:00</div>
   </div>
 
   <div class="progress-bar-track">
-    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+    <div class="progress-bar-fill" id="progressBar"></div>
   </div>
 
   <div id="question" class="question-card">
     <button id="discordBtn" class="action-btn" onclick="loginWithDiscord()">Link Discord Account</button>
-    <button id="startBtn" class="action-btn" onclick="startExam()" style="display: none; margin-top: 10px;">Start Examination</button>
+    <button id="startBtn" class="action-btn start-btn" onclick="startExam()" style="display:none;">Start Examination</button>
   </div>
 
   <div id="input-area">
@@ -221,6 +219,12 @@ const CLIENT_ID = '1487244125488152589';
 const REDIRECT_URI = window.location.href.split('#')[0];
 const TIME_LIMIT = 120;
 
+let current = 0;
+let answers = [];
+let timerInterval = null;
+let secondsLeft = TIME_LIMIT;
+window.linkedUser = null;
+
 const infoQuestions = ["Enter your Roblox username:"];
 const mainQuestions = [
   "You observe a Soldier wearing an Advisor mask and armband, randomly killing a player in a restricted area they were not assigned to guard, while a Manager watches and fails to intervene. What do you do?",
@@ -232,37 +236,26 @@ const mainQuestions = [
   "Identify the rank requirements for a Section Leader, a Platoon CO, and Company Leadership.",
   "During a Merit Department promotion wave, what are the specific restrictions regarding the discussion of Managers on Trial? Additionally, what is the mandatory evidence requirement for any individual being considered for a promotion to Supervisor or higher?",
   "Type a batch command string that gives you a sword, waits 5 seconds, announces 'Event Starting' to the server, and teleports all players on the 'Tryoutee' team to you.",
-  "Contrast the primary roles of the Community Department and the Justice Department.",
+  "Contrast the primary roles of The Management Program and the Justice Department.",
   "Does High Command have authority over Sentry or Rangers? How do you report an infraction by a member of these divisions, and how do you identify 'stolen valor' using their mask ranks?",
   "Explain the specific regulations regarding VIP Vitality commands (e.g., :god) when a VIP intends to enter combat. What are the two conditions they must satisfy before engaging an armed opponent, and can they leave the VIP room while godded?",
   "Contrast the first-offense punishment for Corruption versus Insubordination for a Soldier. Who has the final authority on permanent blacklists?",
   "Explain the first three steps of the I STAFF method. What is the impact of being placed on Zero Tolerance?"
 ];
-
 const allQuestions = [...infoQuestions, ...mainQuestions];
-let current = 0;
-let answers = [];
-let timerInterval = null;
-let secondsLeft = TIME_LIMIT;
-window.linkedUser = null;
 
-const questionEl = document.getElementById('question');
-const answerEl = document.getElementById('answer');
-const sendBtn = document.getElementById('sendBtn');
-const progressEl = document.getElementById('progress');
-const timerEl = document.getElementById('timer');
-const progressBar = document.getElementById('progressBar');
-const noticeEl = document.getElementById('notice');
-
-// --- DISCORD LOGIN LOGIC ---
+// 1. Redirect to Discord
 function loginWithDiscord() {
     const url = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
     window.location.href = url;
 }
 
+// 2. Check for Token on Page Load
 window.onload = () => {
-    const fragment = new URLSearchParams(window.location.hash.slice(1));
-    const token = fragment.get('access_token');
+    const hash = window.location.hash.slice(1);
+    const params = new URLSearchParams(hash);
+    const token = params.get('access_token');
+
     if (token) {
         fetch('https://discord.com/api/users/@me', {
             headers: { Authorization: `Bearer ${token}` }
@@ -270,17 +263,23 @@ window.onload = () => {
         .then(res => res.json())
         .then(user => {
             window.linkedUser = user;
-            noticeEl.innerHTML = `✅ **Linked as:** ${user.username}#${user.discriminator || '0'} (${user.id})`;
+            document.getElementById('notice').innerHTML = `✅ **Linked:** ${user.username} (${user.id})`;
             document.getElementById('discordBtn').style.display = 'none';
             document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('progress').innerText = "Account Verified";
             window.history.replaceState({}, document.title, REDIRECT_URI);
+        })
+        .catch(() => {
+            alert("Discord session expired. Please link again.");
         });
     }
 };
 
-// --- EXAM LOGIC ---
+// 3. Exam Logic
 function startExam() {
-    noticeEl.classList.add('hidden');
+    if (!window.linkedUser) return alert("Please link your Discord first!");
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('notice').classList.add('hidden');
     document.getElementById('input-area').style.display = 'flex';
     loadQuestion();
 }
@@ -290,16 +289,15 @@ function loadQuestion() {
         finishExam();
         return;
     }
-
     const pct = (current / allQuestions.length) * 100;
-    progressBar.style.width = pct + '%';
-    progressEl.textContent = `Question ${current + 1} / ${allQuestions.length}`;
-    questionEl.innerHTML = allQuestions[current];
-    answerEl.value = '';
-    answerEl.focus();
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progress').innerText = `Question ${current + 1} / ${allQuestions.length}`;
+    document.getElementById('question').innerText = allQuestions[current];
+    document.getElementById('answer').value = '';
+    document.getElementById('answer').focus();
 
     if (current >= infoQuestions.length) {
-        timerEl.style.display = 'block';
+        document.getElementById('timer').style.display = 'block';
         startTimer();
     }
 }
@@ -321,60 +319,54 @@ function startTimer() {
 function updateTimerDisplay() {
     const mins = Math.floor(secondsLeft / 60);
     const secs = secondsLeft % 60;
-    timerEl.textContent = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`;
-    timerEl.className = 'timer' + (secondsLeft <= 30 ? ' warning' : '');
+    const el = document.getElementById('timer');
+    el.innerText = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`;
+    el.className = 'timer' + (secondsLeft <= 30 ? ' warning' : '');
 }
 
 function nextQuestion(timedOut = false) {
-    const val = answerEl.value.trim();
-    const finalAns = timedOut ? "Failure to provide an answer within the time limit." : (val === "" ? "N/A" : val);
-    answers.push(finalAns);
+    const val = document.getElementById('answer').value.trim();
+    answers.push(timedOut ? "Timed Out" : (val || "N/A"));
     current++;
     loadQuestion();
 }
 
-sendBtn.onclick = () => nextQuestion(false);
-answerEl.onkeydown = (e) => { if (e.key === 'Enter') nextQuestion(false); };
+document.getElementById('sendBtn').onclick = () => nextQuestion(false);
+document.getElementById('answer').onkeydown = (e) => { if(e.key === 'Enter') nextQuestion(false); };
 
 function finishExam() {
     clearInterval(timerInterval);
-    timerEl.style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
     document.getElementById('input-area').style.display = 'none';
-    progressBar.style.width = '100%';
-    questionEl.innerHTML = `
-        <div class="done-card">
-            <span class="check">✅</span>
-            <div style="font-family:Rajdhani; font-weight:700; font-size:22px;">SUBMITTED</div>
-            <div style="color:#555; font-size:13px;">Your exam has been logged and sent to staff.</div>
-        </div>
-    `;
+    document.getElementById('progressBar').style.width = '100%';
+    document.getElementById('question').innerHTML = `<div style="font-size:20px; font-weight:700;">SUBMITTING...</div>`;
     sendToDiscord();
 }
 
 function sendToDiscord() {
   const user = window.linkedUser;
-  const robloxUser = answers[0] || "Unknown User";
-  
-  let content = `👤 **Examinee Information**\n`;
-  content += `**Roblox Username:** ${robloxUser}\n`;
-  content += `**Discord Account:** ${user ? user.username : "Not Linked"}\n`;
-  content += `**Discord ID:** ${user ? user.id : "N/A"}\n\n`;
-  content += `➡️ **Responses**\n\n`;
+  const robloxName = answers[0] || "Unknown";
+  let content = `👤 **Examinee Info**\n**Roblox:** ${robloxName}\n**Discord:** ${user.username}\n**ID:** ${user.id}\n\n➡️ **Responses**\n\n`;
 
   mainQuestions.forEach((q, i) => {
-    const ans = answers[i + 1] || "No response provided.";
-    content += `**Q${i+1}:** ${q}\n────────────────────────\n${ans}\n\n`;
+    content += `**Q${i+1}:** ${q}\n────────────\n${answers[i+1]}\n\n`;
   });
 
   fetch(WORKER_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      username: robloxUser,
+      username: robloxName,
       content: content,
-      avatar: user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : null,
-      discordTag: user ? user.username : "Unknown"
+      avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
+      tag: user.username
     })
+  }).then(() => {
+    document.getElementById('question').innerHTML = `
+      <span style="font-size:40px;">✅</span><br>
+      <div style="font-family:Rajdhani; font-weight:700; font-size:24px;">SUCCESS</div>
+      <div style="color:#555; font-size:13px;">Your exam has been logged.</div>
+    `;
   });
 }
 </script>
