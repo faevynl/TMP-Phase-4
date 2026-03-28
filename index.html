@@ -6,9 +6,7 @@
 <title>TMP Phase 4 Examination</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500&display=swap');
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Inter', sans-serif;
     background-color: #0a0a0a;
@@ -21,7 +19,6 @@
     min-height: 100vh;
     padding: 24px;
   }
-
   #app {
     width: 100%;
     max-width: 560px;
@@ -29,7 +26,6 @@
     flex-direction: column;
     gap: 12px;
   }
-
   .header {
     display: flex;
     align-items: center;
@@ -41,7 +37,6 @@
     position: relative;
     overflow: hidden;
   }
-
   .header::before {
     content: '';
     position: absolute;
@@ -51,12 +46,10 @@
     background-size: 200% 100%;
     animation: shimmer 3s linear infinite;
   }
-
   @keyframes shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
   }
-
   .header-logo {
     width: 48px;
     height: 48px;
@@ -65,7 +58,6 @@
     border: 1px solid rgba(255,105,180,0.4);
     flex-shrink: 0;
   }
-
   .header-title {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
@@ -73,7 +65,6 @@
     color: #fff;
     letter-spacing: 1px;
   }
-
   .header-subtitle {
     font-size: 12px;
     color: #00dcff;
@@ -81,7 +72,6 @@
     text-transform: uppercase;
     margin-top: 2px;
   }
-
   .notice-card {
     background: linear-gradient(135deg, rgba(0,220,255,0.05), rgba(255,105,180,0.05));
     border: 1px solid rgba(0, 220, 255, 0.25);
@@ -92,7 +82,6 @@
     text-align: center;
     line-height: 1.6;
   }
-
   .glow-text {
     color: #00dcff;
     font-weight: 700;
@@ -100,14 +89,11 @@
     letter-spacing: 1px;
     animation: text-pulse 2s infinite ease-in-out;
   }
-
   @keyframes text-pulse {
     0%, 100% { text-shadow: 0 0 5px rgba(0, 220, 255, 0.3); opacity: 0.8; }
     50% { text-shadow: 0 0 15px rgba(0, 220, 255, 0.9), 0 0 25px rgba(0, 220, 255, 0.5); opacity: 1; color: #fff; }
   }
-
   .meta-row { display: flex; justify-content: space-between; align-items: center; }
-
   .progress {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 600;
@@ -115,7 +101,6 @@
     color: #ff69b4;
     text-transform: uppercase;
   }
-
   .timer {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
@@ -123,20 +108,17 @@
     color: #00dcff;
     display: none;
   }
-
   .progress-bar-track {
     width: 100%; height: 3px;
     background: rgba(255,255,255,0.08);
     border-radius: 2px;
     overflow: hidden;
   }
-
   .progress-bar-fill {
     height: 100%; width: 0%;
     background: linear-gradient(90deg, #ff69b4, #00dcff);
     transition: width 0.4s ease;
   }
-
   .question-card {
     background: #0d0d0d;
     border: 1px solid rgba(255, 105, 180, 0.3);
@@ -151,27 +133,19 @@
     text-align: center;
     overflow: hidden;
   }
-
-  .fade-in {
-    animation: questionFade 0.5s ease forwards;
-  }
-
+  .fade-in { animation: questionFade 0.5s ease forwards; }
   @keyframes questionFade {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
   #input-area { display: none; gap: 10px; margin-top: 10px; }
-
   #answer {
     flex: 1; padding: 13px 16px; border-radius: 12px;
     border: 1px solid rgba(255, 105, 180, 0.35);
     background: #0d0d0d; color: #fff;
     outline: none;
   }
-
   #answer:focus { outline: 2px solid #00dcff !important; border-color: #00dcff; }
-
   .action-btn {
     padding: 14px 28px; border-radius: 12px;
     border: 1px solid rgba(0, 220, 255, 0.5);
@@ -180,24 +154,19 @@
     font-family: 'Rajdhani', sans-serif; font-weight: 700;
     text-transform: uppercase; transition: 0.3s;
   }
-
   .action-btn:hover { background: #00dcff; color: #000; box-shadow: 0 0 20px rgba(0, 220, 255, 0.4); }
-
   #sendBtn {
     padding: 13px 22px; border-radius: 12px; border: 1px solid #ff69b4;
     background: transparent; color: #fff; cursor: pointer;
     font-family: 'Rajdhani', sans-serif; font-weight: 700;
     text-transform: uppercase; transition: 0.3s;
   }
-
   #sendBtn:hover {
     background: linear-gradient(90deg, #ff69b4, #00dcff) !important;
     color: #000 !important; border-color: transparent !important;
   }
-
   .start-btn { border-color: rgba(255, 105, 180, 0.5); background: rgba(255, 105, 180, 0.1); color: #ff69b4; }
   .start-btn:hover { background: #ff69b4; color: #000; }
-
   .credit-text {
     font-family: 'Rajdhani', sans-serif;
     font-size: 10px;
@@ -238,30 +207,24 @@
   </div>
   <div id="credit" class="credit-text">CREATED BY FAEVYNL</div>
 </div>
-
 <script>
-const SFX_NEXT = new Audio('https://raw.githubusercontent.com/rafael-m-silva/simple-timer-app/master/src/assets/audio/beep.mp3');
-const SFX_SUCCESS = new Audio('https://cdn.pixabay.com/download/audio/2021/08/04/audio_06d36f8f53.mp3');
-
+const SFX_NEXT = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_730691761b.mp3');
+const SFX_SUCCESS = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_06d36f8f53.mp3');
 const WORKER_URL = "https://server.yyourmom96.workers.dev";
 const CLIENT_ID = '1487244125488152589';
 const REDIRECT_URI = window.location.href.split('#')[0];
 const TIME_LIMIT = 120;
-
 let current = 0; let answers = []; let timerInterval = null; let secondsLeft = TIME_LIMIT; window.linkedUser = null;
 const infoQuestions = ["Enter your Roblox username:"];
 let mainQuestions = []; let allQuestions = [...infoQuestions];
-
 function loginWithDiscord() {
     window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
 }
-
 window.onload = () => {
     const params = new URLSearchParams(window.location.hash.slice(1));
     const token = params.get('access_token') || localStorage.getItem('discord_token');
     if (token) validateDiscordUser(token);
 };
-
 function validateDiscordUser(token) {
     fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
     .then(res => res.json())
@@ -274,11 +237,9 @@ function validateDiscordUser(token) {
         document.getElementById('progress').innerText = "Account Verified";
     });
 }
-
 async function startExam() {
     SFX_NEXT.load();
     SFX_SUCCESS.load();
-
     try {
         const response = await fetch(WORKER_URL);
         const data = await response.json();
@@ -290,21 +251,16 @@ async function startExam() {
         loadQuestion();
     } catch (e) { alert("Server Error."); }
 }
-
 function loadQuestion() {
     const qContainer = document.getElementById('question');
     const credit = document.getElementById('credit');
-
     if (current > 0) credit.classList.add('credit-hidden');
     if (current >= allQuestions.length) { finishExam(); return; }
-
     SFX_NEXT.currentTime = 0;
     SFX_NEXT.play().catch(() => {});
-
     qContainer.classList.remove('fade-in');
     void qContainer.offsetWidth; 
     qContainer.classList.add('fade-in');
-
     document.getElementById('progressBar').style.width = (current / allQuestions.length) * 100 + '%';
     document.getElementById('progress').innerText = `Question ${current + 1} / ${allQuestions.length}`;
     qContainer.innerText = allQuestions[current];
@@ -312,7 +268,6 @@ function loadQuestion() {
     document.getElementById('answer').focus();
     if (current >= infoQuestions.length) { document.getElementById('timer').style.display = 'block'; startTimer(); }
 }
-
 function startTimer() {
     clearInterval(timerInterval); secondsLeft = TIME_LIMIT;
     timerInterval = setInterval(() => {
@@ -322,25 +277,20 @@ function startTimer() {
         if (secondsLeft <= 0) nextQuestion(true);
     }, 1000);
 }
-
 function nextQuestion(timedOut = false) {
     answers.push(timedOut ? "Timed Out" : (document.getElementById('answer').value.trim() || "Examinee failed to provide an answer."));
     current++; loadQuestion();
 }
-
 document.getElementById('sendBtn').onclick = () => nextQuestion(false);
 document.getElementById('answer').onkeydown = (e) => { if(e.key === 'Enter') nextQuestion(false); };
-
 function finishExam() {
     clearInterval(timerInterval);
     document.getElementById('timer').style.display = 'none';
     document.getElementById('input-area').style.display = 'none';
     document.getElementById('question').innerHTML = `<div class="glow-text">Submitting Data...</div>`;
-    
     const user = window.linkedUser;
     let content = `**Roblox**: ${answers[0]}\n**Discord**: ${user.username}\n\n`;
     mainQuestions.forEach((q, i) => { content += `**Q${i+1}:** ${q}\n> ${answers[i+1]}\n\n`; });
-
     fetch(WORKER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
