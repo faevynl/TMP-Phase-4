@@ -29,7 +29,7 @@
   .review-a { font-size: 13px; color: #fff; margin-top: 4px; }
   #input-area { display: none; flex-direction: column; gap: 10px; }
   #answer { width: 100%; min-height: 120px; padding: 14px; border-radius: 12px; border: 1px solid rgba(255, 105, 180, 0.3); background: #0d0d0d; color: #fff; outline: none; resize: none; -webkit-user-select: text; user-select: text; }
-  .manual-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ff69b4; background: #111; color: #fff; text-align: center; font-family: 'Inter', sans-serif; }
+  #answer.single-line { min-height: unset; height: 48px; resize: none; }
   .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(0, 220, 255, 0.5); background: rgba(0, 220, 255, 0.1); color: #00dcff; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; transition: 0.2s; }
   .action-btn:hover { background: #00dcff; color: #000; }
   .credit-text { font-family: 'Rajdhani', sans-serif; font-size: 10px; color: rgba(255, 255, 255, 0.2); text-align: center; margin-top: 15px; letter-spacing: 2px; }
@@ -45,7 +45,7 @@
     </div>
   </div>
   <div class="notice-card" id="notice">
-    <span class="glow-text">Identity Verification</span><br>Link Discord to fetch your Roblox profile.
+    <span class="glow-text">Identity Verification</span><br>Link your Discord account to begin.
   </div>
   <div class="meta-row">
     <div class="progress" id="progress">Locked</div>
@@ -67,7 +67,7 @@ const D_CLIENT = '1487244125488152589';
 const REDIRECT = window.location.href.split('#')[0];
 const TIME_LIMIT = 120;
 let current = 0; let answers = []; let timerInterval = null; let secondsLeft = TIME_LIMIT;
-window.dUser = null; window.rUser = null; window.userRank = null; let mainQuestions = [];
+window.dUser = null; window.rUser = null; let mainQuestions = [];
 
 function loginDiscord() {
     window.location.href = `https://discord.com/oauth2/authorize?client_id=${D_CLIENT}&redirect_uri=${encodeURIComponent(REDIRECT)}&response_type=token&scope=identify`;
@@ -77,39 +77,23 @@ window.onload = () => {
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
     const dToken = hashParams.get('access_token');
     if (dToken) {
-        document.getElementById('question').innerHTML = `<div class="glow-text">Verifying Roblox Profile...</div>`;
+        document.getElementById('question').innerHTML = `<div class="glow-text">Verifying Discord...</div>`;
         fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${dToken}` } })
         .then(res => res.json()).then(user => {
             window.dUser = user;
-            return fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ type: "CLANLABS_VERIFY", discordId: user.id }) });
-        })
-        .then(res => res.json()).then(data => {
-            if (data.error === "CL_FAIL" || data.error === "NOT_IN_GROUP") {
-                document.getElementById('notice').innerHTML = `<span style="color:#ff69b4;">Roblox Sync Unavailable</span><br>Manually enter your Roblox Username below.`;
-                document.getElementById('question').innerHTML = `<input type="text" id="manualName" class="manual-input" placeholder="Roblox Username"><button class="action-btn" onclick="startManual()">Begin Manually</button>`;
-            } else if (data.error) {
-                document.getElementById('notice').innerHTML = `<span style="color:red;">Eligibility Error</span><br>${data.error}`;
-                document.getElementById('question').innerHTML = `<button class="action-btn" onclick="loginDiscord()">Try Again</button>`;
-            } else {
-                window.rUser = data.username; window.userRank = data.rank;
-                document.getElementById('notice').innerHTML = `<span class="glow-text">Roblox Verified</span><br>${window.rUser} (Rank ${window.userRank})`;
-                document.getElementById('question').innerHTML = `<button class="action-btn" onclick="startExam()">Start Written Exam</button>`;
-            }
+            document.getElementById('notice').innerHTML = `<span class="glow-text">Discord Verified</span><br>${window.dUser.username}`;
+            document.getElementById('question').innerHTML = `<button class="action-btn" onclick="startExam()">Start Written Exam</button>`;
+        }).catch(() => {
+            document.getElementById('notice').innerHTML = `<span style="color:red;">Verification Failed</span><br>Please try again.`;
+            document.getElementById('question').innerHTML = `<button class="action-btn" onclick="loginDiscord()">Try Again</button>`;
         });
     }
 };
 
-async function startManual() {
-    const val = document.getElementById('manualName').value.trim();
-    if (val.length < 3) return alert("Please enter your Roblox username.");
-    window.rUser = val; window.userRank = "UNVERIFIED";
-    startExam();
-}
-
 async function startExam() {
     const res = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ type: "FETCH_QUESTIONS" }) });
     const data = await res.json();
-    mainQuestions = data.questions;
+    mainQuestions = ["What is your Roblox username?", ...data.questions];
     document.getElementById('notice').style.display = 'none';
     document.getElementById('input-area').style.display = 'flex';
     loadQuestion();
@@ -117,15 +101,25 @@ async function startExam() {
 
 function loadQuestion() {
     const qContainer = document.getElementById('question');
+    const answerEl = document.getElementById('answer');
     clearInterval(timerInterval);
     if (current >= mainQuestions.length) { showReview(); return; }
     document.getElementById('progressBar').style.width = (current / mainQuestions.length) * 100 + '%';
     document.getElementById('progress').innerText = `Question ${current + 1} of ${mainQuestions.length}`;
     qContainer.innerText = mainQuestions[current];
-    document.getElementById('answer').value = answers[current] || '';
-    document.getElementById('answer').focus();
-    document.getElementById('timer').style.display = 'block';
-    startTimer();
+    answerEl.value = answers[current] || '';
+    answerEl.focus();
+
+    if (current === 0) {
+        answerEl.classList.add('single-line');
+        answerEl.placeholder = "Enter your Roblox username...";
+        document.getElementById('timer').style.display = 'none';
+    } else {
+        answerEl.classList.remove('single-line');
+        answerEl.placeholder = "Type answer here...";
+        document.getElementById('timer').style.display = 'block';
+        startTimer();
+    }
 }
 
 function startTimer() {
@@ -139,7 +133,16 @@ function startTimer() {
     }, 1000);
 }
 
-function nextQuestion() { answers[current] = document.getElementById('answer').value.trim() || "No response provided."; current++; loadQuestion(); }
+function nextQuestion() {
+    const val = document.getElementById('answer').value.trim();
+    if (current === 0) {
+        if (val.length < 3) return alert("Please enter your Roblox username.");
+        window.rUser = val;
+    }
+    answers[current] = val || "No response provided.";
+    current++;
+    loadQuestion();
+}
 
 function showReview() {
     document.getElementById('timer').style.display = 'none';
@@ -155,11 +158,11 @@ function jumpTo(index) { current = index; document.getElementById('input-area').
 
 function finalSubmit() {
     document.getElementById('question').innerHTML = `<div class="glow-text">Transmitting Answers...</div>`;
-    let content = `**Roblox Account**: ${window.rUser}\n**Discord User**: ${window.dUser?.username}\n\n`;
+    let content = `**Roblox Username**: ${window.rUser}\n**Discord User**: ${window.dUser?.username}\n\n`;
     mainQuestions.forEach((q, i) => { content += `**Q${i+1}:** ${q}\n> ${answers[i]}\n\n`; });
     fetch(WORKER_URL, {
         method: "POST",
-        body: JSON.stringify({ username: window.rUser, content, rank: window.userRank, avatar: `https://cdn.discordapp.com/avatars/${window.dUser.id}/${window.dUser.avatar}.png` })
+        body: JSON.stringify({ username: window.rUser, content, rank: "N/A", avatar: `https://cdn.discordapp.com/avatars/${window.dUser.id}/${window.dUser.avatar}.png` })
     }).then(() => { document.getElementById('question').innerHTML = `<div class="glow-text" style="font-size:24px;">✅ Submission Received</div>`; });
 }
 </script>
