@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TMP Phase 4 Examination</title>
+<title>TMP Phase 4 | Written Assessment</title>
 <meta name="title" content="TMP Phase 4 | Written Assessment">
 <meta name="description" content="Official Phase 4 Examination for The Management Program. Ensure you are prepared before beginning.">
 <meta property="og:type" content="website">
@@ -11,20 +11,12 @@
 <meta property="og:title" content="TMP Phase 4 Examination">
 <meta property="og:description" content="Official Phase 4 Examination for The Management Program. Authorized personnel only.">
 <meta property="og:image" content="https://i.imgur.com/mWDOZI5.png">
-
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://faevynl.github.io/TMP-Phase-4/">
-<meta property="twitter:title" content="TMP Phase 4 | Written Assessment">
-<meta property="twitter:description" content="Official Phase 4 Examination for The Management Program.">
-<meta property="twitter:image" content="https://i.imgur.com/mWDOZI5.png">
-
 <meta name="theme-color" content="#ff69b4">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'Inter', sans-serif;
-    background-color: #0a0a0a;
+    font-family: 'Inter', sans-serif; background-color: #0a0a0a;
     background-image: radial-gradient(ellipse at 20% 50%, rgba(255, 105, 180, 0.07) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(0, 220, 255, 0.07) 0%, transparent 60%);
     display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 24px;
   }
@@ -44,19 +36,19 @@
   .progress-bar-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
   .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff69b4, #00dcff); transition: width 0.4s ease; }
   .question-card { background: #0d0d0d; border: 1px solid rgba(255, 105, 180, 0.3); border-radius: 16px; padding: 40px 24px; color: #f0f0f0; min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
-  .fade-in { animation: questionFade 0.5s ease forwards; }
-  @keyframes questionFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .review-container { text-align: left; width: 100%; max-height: 400px; overflow-y: auto; padding-right: 10px; }
+  .review-item { margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; cursor: pointer; transition: 0.2s; }
+  .review-item:hover { background: rgba(0,220,255,0.05); }
+  .review-q { font-size: 11px; color: #00dcff; text-transform: uppercase; margin-bottom: 4px; }
+  .review-a { font-size: 14px; color: #fff; line-height: 1.4; }
   #input-area { display: none; flex-direction: column; gap: 10px; margin-top: 10px; }
-  #answer { width: 100%; min-height: 120px; padding: 14px; border-radius: 12px; border: 1px solid rgba(255, 105, 180, 0.35); background: #0d0d0d; color: #fff; outline: none; resize: none; font-family: 'Inter', sans-serif; line-height: 1.6; word-wrap: break-word; white-space: pre-wrap; }
+  #answer { width: 100%; min-height: 120px; padding: 14px; border-radius: 12px; border: 1px solid rgba(255, 105, 180, 0.35); background: #0d0d0d; color: #fff; outline: none; resize: none; font-family: 'Inter', sans-serif; line-height: 1.6; overflow-wrap: break-word; white-space: pre-wrap; }
   #answer:focus { outline: 2px solid #00dcff !important; border-color: #00dcff; }
-  .action-btn { padding: 14px 28px; border-radius: 12px; border: 1px solid rgba(0, 220, 255, 0.5); background: rgba(0, 220, 255, 0.1); color: #00dcff; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
+  .action-btn { width: 100%; padding: 14px 28px; border-radius: 12px; border: 1px solid rgba(0, 220, 255, 0.5); background: rgba(0, 220, 255, 0.1); color: #00dcff; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
   .action-btn:hover { background: #00dcff; color: #000; box-shadow: 0 0 20px rgba(0, 220, 255, 0.4); }
   #sendBtn { width: 100%; padding: 13px 22px; border-radius: 12px; border: 1px solid #ff69b4; background: transparent; color: #fff; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
   #sendBtn:hover { background: linear-gradient(90deg, #ff69b4, #00dcff) !important; color: #000 !important; border-color: transparent !important; }
-  .start-btn { border-color: rgba(255, 105, 180, 0.5); background: rgba(255, 105, 180, 0.1); color: #ff69b4; }
-  .start-btn:hover { background: #ff69b4; color: #000; }
-  .credit-text { font-family: 'Rajdhani', sans-serif; font-size: 10px; color: rgba(255, 255, 255, 0.2); text-align: center; letter-spacing: 4px; margin-top: 15px; transition: opacity 1s ease, transform 1s ease; }
-  .credit-hidden { opacity: 0; transform: translateY(5px); pointer-events: none; }
+  .credit-text { font-family: 'Rajdhani', sans-serif; font-size: 10px; color: rgba(255, 255, 255, 0.2); text-align: center; letter-spacing: 4px; margin-top: 15px; }
 </style>
 </head>
 <body>
@@ -69,7 +61,7 @@
     </div>
   </div>
   <div class="notice-card" id="notice">
-    <span class="glow-text">Verification Required</span><br> Click below to link your Discord account.
+    <span class="glow-text">Verification Required</span><br> Click below to link accounts.
   </div>
   <div class="meta-row">
     <div class="progress" id="progress">Awaiting Link...</div>
@@ -78,74 +70,70 @@
   <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBar"></div></div>
   <div id="question" class="question-card">
     <button id="discordBtn" class="action-btn" onclick="loginWithDiscord()">Link Discord Account</button>
-    <button id="startBtn" class="action-btn start-btn" onclick="startExam()" style="display:none;">Start Examination</button>
   </div>
   <div id="input-area">
     <textarea id="answer" placeholder="Type your answer here..."></textarea>
-    <button id="sendBtn">Submit Answer</button>
+    <button id="sendBtn" onclick="nextQuestion()">Submit Answer</button>
   </div>
   <div id="credit" class="credit-text">CREATED BY FAEVYNL</div>
 </div>
+
 <script>
 const WORKER_URL = "https://server.yyourmom96.workers.dev";
 const CLIENT_ID = '1487244125488152589';
 const REDIRECT_URI = window.location.href.split('#')[0];
 const TIME_LIMIT = 120;
-let current = 0; let answers = []; let timerInterval = null; let secondsLeft = TIME_LIMIT; window.linkedUser = null;
-const infoQuestions = ["Enter your Roblox username:"];
-let mainQuestions = []; let allQuestions = [...infoQuestions];
+let current = 0; let answers = []; let timerInterval = null; let secondsLeft = TIME_LIMIT;
+window.linkedUser = null; window.robloxName = "Not Set";
+let mainQuestions = [];
 
 function loginWithDiscord() {
     window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
 }
+
 window.onload = () => {
     const params = new URLSearchParams(window.location.hash.slice(1));
     const token = params.get('access_token') || localStorage.getItem('discord_token');
-    if (token) validateDiscordUser(token);
+    if (token) validateUser(token);
 };
-function validateDiscordUser(token) {
+
+function validateUser(token) {
     fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
     .then(res => res.json())
     .then(user => {
         localStorage.setItem('discord_token', token);
         window.linkedUser = user;
         document.getElementById('notice').innerHTML = `<span class="glow-text">Verified</span><br>${user.username}`;
-        document.getElementById('discordBtn').style.display = 'none';
-        document.getElementById('startBtn').style.display = 'block';
-        document.getElementById('progress').innerText = "Account Verified";
+        document.getElementById('question').innerHTML = `<button class="action-btn" onclick="startExam()">Begin Examination</button>`;
     });
 }
+
 async function startExam() {
+    window.robloxName = prompt("Enter your Roblox Username:") || "Unknown";
     try {
         const response = await fetch(WORKER_URL);
         const data = await response.json();
         mainQuestions = data.questions;
-        allQuestions = [...infoQuestions, ...mainQuestions];
-        document.getElementById('startBtn').style.display = 'none';
         document.getElementById('notice').style.display = 'none';
         document.getElementById('input-area').style.display = 'flex';
         loadQuestion();
     } catch (e) { alert("Server Error."); }
 }
+
 function loadQuestion() {
     const qContainer = document.getElementById('question');
-    const credit = document.getElementById('credit');
     clearInterval(timerInterval);
-    if (current > 0) credit.classList.add('credit-hidden');
-    if (current >= allQuestions.length) { finishExam(); return; }
-    qContainer.classList.remove('fade-in');
-    void qContainer.offsetWidth; 
-    qContainer.classList.add('fade-in');
-    document.getElementById('progressBar').style.width = (current / allQuestions.length) * 100 + '%';
-    document.getElementById('progress').innerText = `Question ${current + 1} / ${allQuestions.length}`;
-    qContainer.innerText = allQuestions[current];
-    document.getElementById('answer').value = '';
+    if (current >= mainQuestions.length) { showReview(); return; }
+    
+    document.getElementById('progressBar').style.width = (current / mainQuestions.length) * 100 + '%';
+    document.getElementById('progress').innerText = `Question ${current + 1} / ${mainQuestions.length}`;
+    qContainer.innerText = mainQuestions[current];
+    document.getElementById('answer').value = answers[current] || '';
     document.getElementById('answer').focus();
-    if (current >= infoQuestions.length) {
-        document.getElementById('timer').style.display = 'block';
-        startTimer();
-    }
+    document.getElementById('timer').style.display = 'block';
+    startTimer();
 }
+
 function startTimer() {
     secondsLeft = TIME_LIMIT;
     document.getElementById('timer').innerText = `⏱ 2:00`;
@@ -153,31 +141,55 @@ function startTimer() {
         secondsLeft--;
         const mins = Math.floor(secondsLeft / 60); const secs = secondsLeft % 60;
         document.getElementById('timer').innerText = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`;
-        if (secondsLeft <= 0) { clearInterval(timerInterval); nextQuestion(true); }
+        if (secondsLeft <= 0) { clearInterval(timerInterval); nextQuestion(); }
     }, 1000);
 }
-function nextQuestion(timedOut = false) {
-    answers.push(timedOut ? "Timed Out" : (document.getElementById('answer').value.trim() || "No answer."));
+
+function nextQuestion() {
+    answers[current] = document.getElementById('answer').value.trim() || "No answer provided.";
     current++; loadQuestion();
 }
-document.getElementById('sendBtn').onclick = () => nextQuestion(false);
-document.getElementById('answer').onkeydown = (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); nextQuestion(false); } };
-function finishExam() {
-    clearInterval(timerInterval);
+
+function showReview() {
     document.getElementById('timer').style.display = 'none';
     document.getElementById('input-area').style.display = 'none';
-    document.getElementById('question').innerHTML = `<div class="glow-text">Submitting...</div>`;
+    document.getElementById('progress').innerText = "Final Review";
+    
+    let html = `<div class="review-container">`;
+    mainQuestions.forEach((q, i) => {
+        html += `<div class="review-item" onclick="jumpTo(${i})">
+            <div class="review-q">Question ${i+1}</div>
+            <div class="review-a">${answers[i]}</div>
+        </div>`;
+    });
+    html += `</div><button class="action-btn" onclick="finalSubmit()" style="margin-top:15px; border-color:#ff69b4; color:#ff69b4;">Submit to Justice Dept</button>`;
+    document.getElementById('question').innerHTML = html;
+}
+
+function jumpTo(index) {
+    current = index;
+    document.getElementById('input-area').style.display = 'flex';
+    loadQuestion();
+}
+
+function finalSubmit() {
+    document.getElementById('question').innerHTML = `<div class="glow-text">Filing Report...</div>`;
     const user = window.linkedUser;
-    let content = `**Roblox**: ${answers[0]}\n**Discord**: ${user.username}\n\n`;
-    mainQuestions.forEach((q, i) => { content += `**Q${i+1}:** ${q}\n> ${answers[i+1]}\n\n`; });
+    let content = `**Roblox**: ${window.robloxName}\n**Discord**: ${user.username}\n\n`;
+    mainQuestions.forEach((q, i) => { content += `**Q${i+1}:** ${q}\n> ${answers[i]}\n\n`; });
+
     fetch(WORKER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: answers[0], content, avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`, tag: user.username })
+        body: JSON.stringify({ username: window.robloxName, content, avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`, tag: user.username })
     }).then(() => {
-        document.getElementById('question').innerHTML = `<div class="glow-text" style="font-size:24px;">✅ Submitted</div>`;
+        document.getElementById('question').innerHTML = `<div class="glow-text" style="font-size:24px;">✅ Filed Successfully</div>`;
     });
 }
+
+document.getElementById('answer').onkeydown = (e) => { 
+    if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); nextQuestion(); } 
+};
 </script>
 </body>
 </html>
