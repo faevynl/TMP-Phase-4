@@ -142,6 +142,7 @@
     flex: 1; padding: 13px 16px; border-radius: 12px;
     border: 1px solid rgba(255, 105, 180, 0.35);
     background: #0d0d0d; color: #fff; outline: none;
+    font-family: 'Inter', sans-serif;
   }
 
   .action-btn {
@@ -174,6 +175,7 @@
   #sendBtn {
     padding: 13px 22px; border-radius: 12px; border: 1px solid #ff69b4;
     background: transparent; color: #fff; cursor: pointer;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
   }
 </style>
 </head>
@@ -189,7 +191,7 @@
   </div>
 
   <div class="notice-card" id="notice">
-    <strong>Verification Required</strong><br>
+    Verification Required<br>
     Click below to link your Discord account. This is required to start.
   </div>
 
@@ -225,63 +227,76 @@ let timerInterval = null;
 let secondsLeft = TIME_LIMIT;
 window.linkedUser = null;
 
+// Initial Questions
 const infoQuestions = ["Enter your Roblox username:"];
-const mainQuestions = [
-  "You observe a Soldier wearing an Advisor mask and armband, randomly killing a player in a restricted area they were not assigned to guard, while a Manager watches and fails to intervene. What do you do?",
-  "A VIP is using the :char command to appear as a Manager and is attempting to give orders to Workers during a tryout. What do you do?",
-  "A staff member submits a report clip of a player no-clipping, but the username is not visible in the footage. What do you do?",
-  "Describe the 'Authority Inheritance' protocol for a Sentry guarding a Supreme Rank. If a Sentry is guarding the Frontman, what specific authority do they possess over other staff members, and when is this authority valid?",
-  "In Round 2 of a Soldier Evaluation (Outscore 9), an attendee finishes with 1250 Damage, a 1:1 KDR, and 450 heals. Do they pass? What do you do?",
-  "Write the exact sequence of commands to protect your tryoutees, identify flying exploiters, and the specific ban format for a user named 'RaidLeader123'.",
-  "Identify the rank requirements for a Section Leader, a Platoon CO, and Company Leadership.",
-  "During a Merit Department promotion wave, what are the specific restrictions regarding the discussion of Managers on Trial? Additionally, what is the mandatory evidence requirement for any individual being considered for a promotion to Supervisor or higher?",
-  "Type a batch command string that gives you a sword, waits 5 seconds, announces 'Event Starting' to the server, and teleports all players on the 'Tryoutee' team to you.",
-  "Contrast the primary roles of The Management Program and the Justice Department.",
-  "Does High Command have authority over Sentry or Rangers? How do you report an infraction by a member of these divisions, and how do you identify 'stolen valor' using their mask ranks?",
-  "Explain the specific regulations regarding VIP Vitality commands (e.g., :god) when a VIP intends to enter combat. What are the two conditions they must satisfy before engaging an armed opponent, and can they leave the VIP room while godded?",
-  "Contrast the first-offense punishment for Corruption versus Insubordination for a Soldier. Who has the final authority on permanent blacklists?",
-  "Explain the first three steps of the I STAFF method. What is the impact of being placed on Zero Tolerance?"
-];
-const allQuestions = [...infoQuestions, ...mainQuestions];
+let mainQuestions = []; 
+let allQuestions = [...infoQuestions];
 
-// 1. Redirect to Discord
 function loginWithDiscord() {
     const url = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
     window.location.href = url;
 }
 
-// 2. Check for Token on Page Load
 window.onload = () => {
     const hash = window.location.hash.slice(1);
     const params = new URLSearchParams(hash);
-    const token = params.get('access_token');
+    const urlToken = params.get('access_token');
+    const savedToken = localStorage.getItem('discord_token');
+    const activeToken = urlToken || savedToken;
 
-    if (token) {
-        fetch('https://discord.com/api/users/@me', {
-            headers: { Authorization: `Bearer ${token}` }
-        })
-        .then(res => res.json())
-        .then(user => {
-            window.linkedUser = user;
-            document.getElementById('notice').innerHTML = `✅ Linked: ${user.username} (${user.id})`;
-            document.getElementById('discordBtn').style.display = 'none';
-            document.getElementById('startBtn').style.display = 'block';
-            document.getElementById('progress').innerText = "Account Verified";
-            window.history.replaceState({}, document.title, REDIRECT_URI);
-        })
-        .catch(() => {
-            alert("Discord session expired. Please link again.");
-        });
+    if (activeToken) {
+        validateDiscordUser(activeToken);
     }
 };
 
-// 3. Exam Logic
-function startExam() {
+function validateDiscordUser(token) {
+    fetch('https://discord.com/api/users/@me', {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+    })
+    .then(user => {
+        localStorage.setItem('discord_token', token);
+        window.linkedUser = user;
+        
+        document.getElementById('notice').innerText = `Linked as: ${user.username} (${user.id})`;
+        
+        document.getElementById('discordBtn').style.display = 'none';
+        document.getElementById('startBtn').style.display = 'block';
+        document.getElementById('progress').innerText = "Account Verified";
+        window.history.replaceState({}, document.title, REDIRECT_URI);
+    })
+    .catch(() => {
+        localStorage.removeItem('discord_token');
+        document.getElementById('notice').innerText = "Session expired. Please link Discord again.";
+        document.getElementById('discordBtn').style.display = 'block';
+        document.getElementById('startBtn').style.display = 'none';
+    });
+}
+
+async function startExam() {
     if (!window.linkedUser) return alert("Please link your Discord first!");
-    document.getElementById('startBtn').style.display = 'none';
-    document.getElementById('notice').classList.add('hidden');
-    document.getElementById('input-area').style.display = 'flex';
-    loadQuestion();
+    
+    document.getElementById('startBtn').innerText = "LOADING...";
+    document.getElementById('startBtn').disabled = true;
+
+    try {
+        const response = await fetch(WORKER_URL);
+        const data = await response.json();
+        mainQuestions = data.questions;
+        allQuestions = [...infoQuestions, ...mainQuestions];
+
+        document.getElementById('startBtn').style.display = 'none';
+        document.getElementById('notice').classList.add('hidden');
+        document.getElementById('input-area').style.display = 'flex';
+        loadQuestion();
+    } catch (e) {
+        alert("Failed to load questions from server. Please refresh.");
+        document.getElementById('startBtn').innerText = "Start Examination";
+        document.getElementById('startBtn').disabled = false;
+    }
 }
 
 function loadQuestion() {
@@ -339,17 +354,18 @@ function finishExam() {
     document.getElementById('timer').style.display = 'none';
     document.getElementById('input-area').style.display = 'none';
     document.getElementById('progressBar').style.width = '100%';
-    document.getElementById('question').innerHTML = `<div style="font-size:20px; font-weight:700;">SUBMITTING...</div>`;
+    document.getElementById('question').innerHTML = `<div style="font-size:20px; font-weight:700; color:#00dcff;">SUBMITTING DATA...</div>`;
     sendToDiscord();
 }
 
 function sendToDiscord() {
   const user = window.linkedUser;
   const robloxName = answers[0] || "Unknown";
-  let content = `👤 **Examinee Info**\n**Roblox:** ${robloxName}\n**Discord:** ${user.username}\n**ID:** ${user.id}\n\n➡️ **Responses**\n\n`;
+  
+  let content = `Examinee Info\nRoblox: ${robloxName}\nDiscord: ${user.username}\nID: ${user.id}\n\nResponses\n\n`;
 
   mainQuestions.forEach((q, i) => {
-    content += `**Q${i+1}:** ${q}\n────────────\n${answers[i+1]}\n\n`;
+    content += `Q${i+1}: ${q}\n────────────\n${answers[i+1] || "No Answer"}\n\n`;
   });
 
   fetch(WORKER_URL, {
@@ -358,14 +374,14 @@ function sendToDiscord() {
     body: JSON.stringify({
       username: robloxName,
       content: content,
-      avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
+      avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://i.imgur.com/mWDOZI5.png",
       tag: user.username
     })
   }).then(() => {
     document.getElementById('question').innerHTML = `
-      <span style="font-size:40px;">✅</span><br>
-      <div style="font-family:Rajdhani; font-weight:700; font-size:24px;">SUCCESS</div>
-      <div style="color:#555; font-size:13px;">Your exam has been logged.</div>
+      <div style="font-size:40px;">✅</div>
+      <div style="font-family:Rajdhani; font-weight:700; font-size:24px; color:#00dcff;">SUBMITTED</div>
+      <div style="color:#99b4c0; font-size:13px; margin-top:10px;">Your exam has been logged successfully.</div>
     `;
   });
 }
