@@ -87,24 +87,13 @@
     font-size: 12px;
     text-align: center;
     line-height: 1.6;
-    transition: opacity 0.5s, max-height 0.5s, padding 0.5s, margin 0.5s;
+    transition: all 0.5s;
     overflow: hidden;
-    max-height: 100px;
   }
-  .notice-card.hidden {
-    opacity: 0;
-    max-height: 0;
-    padding: 0;
-    margin: 0;
-    border: none;
-  }
+  .notice-card.hidden { opacity: 0; max-height: 0; padding: 0; margin: 0; border: none; }
   .notice-card strong { color: #00dcff; }
 
-  .meta-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .meta-row { display: flex; justify-content: space-between; align-items: center; }
   .progress {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 600;
@@ -119,6 +108,7 @@
     font-size: 15px;
     color: #00dcff;
     letter-spacing: 1px;
+    display: none;
   }
   .timer.warning { color: #ff4444; animation: pulse 0.8s ease-in-out infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
@@ -145,6 +135,7 @@
     color: #f0f0f0;
     min-height: 110px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     font-size: 15px;
@@ -154,15 +145,8 @@
     overflow: hidden;
     box-shadow: 0 0 30px rgba(255, 105, 180, 0.05);
   }
-  .question-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0,220,255,0.4), transparent);
-  }
 
-  #input-area { display: flex; gap: 10px; }
+  #input-area { display: none; gap: 10px; }
   #answer {
     flex: 1;
     padding: 13px 16px;
@@ -171,105 +155,73 @@
     background: #0d0d0d;
     color: #fff;
     font-size: 15px;
-    font-family: 'Inter', sans-serif;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  #answer::placeholder { color: #444; }
-  #answer:focus {
-    border-color: #00dcff;
-    box-shadow: 0 0 0 3px rgba(0, 220, 255, 0.08);
-  }
-  #sendBtn {
+  #sendBtn, .action-btn {
     padding: 13px 22px;
     border-radius: 12px;
     border: 1px solid rgba(255, 105, 180, 0.5);
     background: linear-gradient(135deg, rgba(255,105,180,0.12), rgba(0,220,255,0.08));
     color: #fff;
     cursor: pointer;
-    font-size: 14px;
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     transition: all 0.2s;
-    white-space: nowrap;
   }
-  #sendBtn:hover {
+  #sendBtn:hover, .action-btn:hover {
     background: linear-gradient(135deg, #ff69b4, #00dcff);
-    border-color: transparent;
     color: #000;
-    box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
   }
 
-  .done-card {
-    background: #0d0d0d;
-    border: 1px solid rgba(0, 220, 255, 0.3);
-    border-radius: 16px;
-    padding: 40px 28px;
-    color: #fff;
-    text-align: center;
-    line-height: 2;
-    box-shadow: 0 0 40px rgba(0, 220, 255, 0.05);
-  }
-  .done-card .check { font-size: 36px; display: block; margin-bottom: 12px; }
-  .done-card .done-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    background: linear-gradient(90deg, #ff69b4, #00dcff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 1px;
-  }
-  .done-card .done-sub { color: #555; font-size: 13px; margin-top: 8px; }
+  .done-card { text-align: center; line-height: 2; padding: 40px 20px; }
+  .check { font-size: 40px; display: block; margin-bottom: 10px; }
 </style>
 </head>
 <body>
-<div id="app">
 
+<div id="app">
   <div class="header">
-    <img src="https://i.imgur.com/mWDOZI5.png" class="header-logo" alt="TMP Logo">
+    <img src="https://i.imgur.com/mWDOZI5.png" class="header-logo" alt="Logo">
     <div class="header-text">
       <div class="header-title">TMP EXAMINATION</div>
-      <div class="header-subtitle">Phase 4 · Written Assessment</div>
+      <div class="header-subtitle">Phase 4 · Verified Assessment</div>
     </div>
   </div>
 
   <div class="notice-card" id="notice">
-    <strong>⚠️ Notice</strong><br>
-    Your answers will be submitted to TMP staff via Discord for review. By completing this examination, you consent to your responses being stored and reviewed by TMP staff.
+    <strong>Verification Required</strong><br>
+    You must link your Discord account to begin this examination.
   </div>
 
   <div class="meta-row">
-    <div class="progress" id="progress"></div>
-    <div class="timer" id="timer"></div>
+    <div class="progress" id="progress">Ready to Start</div>
+    <div class="timer" id="timer">⏱ 0:00</div>
   </div>
 
   <div class="progress-bar-track">
     <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
   </div>
 
-  <div id="question" class="question-card">Loading...</div>
+  <div id="question" class="question-card">
+    <button id="discordBtn" class="action-btn" onclick="loginWithDiscord()">Link Discord Account</button>
+    <button id="startBtn" class="action-btn" onclick="startExam()" style="display: none; margin-top: 10px;">Start Examination</button>
+  </div>
 
   <div id="input-area">
     <input type="text" id="answer" placeholder="Type your answer here...">
     <button id="sendBtn">Submit</button>
   </div>
-
 </div>
 
 <script>
 const WORKER_URL = "https://server.yyourmom96.workers.dev";
+const CLIENT_ID = '1487244125488152589';
+const REDIRECT_URI = window.location.href.split('#')[0];
 const TIME_LIMIT = 120;
-const LOGO_URL = "https://i.imgur.com/mWDOZI5.png";
 
-const infoQuestions = [
-  "Enter your Roblox username:",
-  "Enter your Discord username:",
-  "Enter your Discord ID:"
-];
-
+const infoQuestions = ["Enter your Roblox username:"];
 const mainQuestions = [
   "You observe a Soldier wearing an Advisor mask and armband, randomly killing a player in a restricted area they were not assigned to guard, while a Manager watches and fails to intervene. What do you do?",
   "A VIP is using the :char command to appear as a Manager and is attempting to give orders to Workers during a tryout. What do you do?",
@@ -289,12 +241,10 @@ const mainQuestions = [
 
 const allQuestions = [...infoQuestions, ...mainQuestions];
 let current = 0;
-const answers = [];
+let answers = [];
 let timerInterval = null;
 let secondsLeft = TIME_LIMIT;
-let appStartTime = Date.now();
-let questionStartTime = Date.now();
-let questionTimes = [];
+window.linkedUser = null;
 
 const questionEl = document.getElementById('question');
 const answerEl = document.getElementById('answer');
@@ -304,125 +254,129 @@ const timerEl = document.getElementById('timer');
 const progressBar = document.getElementById('progressBar');
 const noticeEl = document.getElementById('notice');
 
-sendBtn.addEventListener('click', () => nextQuestion(false));
-answerEl.addEventListener('keydown', e => {
-  if (e.key === 'Enter') { e.preventDefault(); nextQuestion(false); }
-});
-
-function startTimer() {
-  clearInterval(timerInterval);
-  secondsLeft = TIME_LIMIT;
-  updateTimerDisplay();
-  timerInterval = setInterval(() => {
-    secondsLeft--;
-    updateTimerDisplay();
-    if (secondsLeft <= 0) {
-      clearInterval(timerInterval);
-      nextQuestion(true);
-    }
-  }, 1000);
+// --- DISCORD LOGIN LOGIC ---
+function loginWithDiscord() {
+    const url = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+    window.location.href = url;
 }
 
-function updateTimerDisplay() {
-  const mins = Math.floor(secondsLeft / 60);
-  const secs = secondsLeft % 60;
-  timerEl.textContent = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`;
-  timerEl.className = 'timer' + (secondsLeft <= 30 ? ' warning' : '');
+window.onload = () => {
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    const token = fragment.get('access_token');
+    if (token) {
+        fetch('https://discord.com/api/users/@me', {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+        .then(res => res.json())
+        .then(user => {
+            window.linkedUser = user;
+            noticeEl.innerHTML = `✅ **Linked as:** ${user.username}#${user.discriminator || '0'} (${user.id})`;
+            document.getElementById('discordBtn').style.display = 'none';
+            document.getElementById('startBtn').style.display = 'block';
+            window.history.replaceState({}, document.title, REDIRECT_URI);
+        });
+    }
+};
+
+// --- EXAM LOGIC ---
+function startExam() {
+    noticeEl.classList.add('hidden');
+    document.getElementById('input-area').style.display = 'flex';
+    loadQuestion();
 }
 
 function loadQuestion() {
-  if (current >= allQuestions.length) {
+    if (current >= allQuestions.length) {
+        finishExam();
+        return;
+    }
+
+    const pct = (current / allQuestions.length) * 100;
+    progressBar.style.width = pct + '%';
+    progressEl.textContent = `Question ${current + 1} / ${allQuestions.length}`;
+    questionEl.innerHTML = allQuestions[current];
+    answerEl.value = '';
+    answerEl.focus();
+
+    if (current >= infoQuestions.length) {
+        timerEl.style.display = 'block';
+        startTimer();
+    }
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    secondsLeft = TIME_LIMIT;
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        secondsLeft--;
+        updateTimerDisplay();
+        if (secondsLeft <= 0) {
+            clearInterval(timerInterval);
+            nextQuestion(true);
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const mins = Math.floor(secondsLeft / 60);
+    const secs = secondsLeft % 60;
+    timerEl.textContent = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`;
+    timerEl.className = 'timer' + (secondsLeft <= 30 ? ' warning' : '');
+}
+
+function nextQuestion(timedOut = false) {
+    const val = answerEl.value.trim();
+    const finalAns = timedOut ? "Failure to provide an answer within the time limit." : (val === "" ? "N/A" : val);
+    answers.push(finalAns);
+    current++;
+    loadQuestion();
+}
+
+sendBtn.onclick = () => nextQuestion(false);
+answerEl.onkeydown = (e) => { if (e.key === 'Enter') nextQuestion(false); };
+
+function finishExam() {
     clearInterval(timerInterval);
     timerEl.style.display = 'none';
-    progressEl.style.display = 'none';
-    progressBar.parentElement.style.display = 'none';
     document.getElementById('input-area').style.display = 'none';
-    noticeEl.classList.add('hidden');
-    questionEl.className = 'done-card';
+    progressBar.style.width = '100%';
     questionEl.innerHTML = `
-      <span class="check">✅</span>
-      <div class="done-title">Examination Submitted</div>
-      <div class="done-sub">Your answers have been sent to TMP staff for review.</div>
+        <div class="done-card">
+            <span class="check">✅</span>
+            <div style="font-family:Rajdhani; font-weight:700; font-size:22px;">SUBMITTED</div>
+            <div style="color:#555; font-size:13px;">Your exam has been logged and sent to staff.</div>
+        </div>
     `;
     sendToDiscord();
-    return;
-  }
-
-  if (current === 1) noticeEl.classList.add('hidden');
-
-  const pct = (current / allQuestions.length) * 100;
-  progressBar.style.width = pct + '%';
-
-  timerEl.style.display = current >= infoQuestions.length ? 'block' : 'none';
-  progressEl.textContent = `Question ${current + 1} / ${allQuestions.length}`;
-  questionEl.textContent = allQuestions[current];
-  answerEl.value = '';
-  answerEl.focus();
-  questionStartTime = Date.now();
-
-  if (current >= infoQuestions.length) {
-    startTimer();
-  } else {
-    clearInterval(timerInterval);
-  }
-}
-
-function nextQuestion(timedOut) {
-  const timeSpent = Math.round((Date.now() - questionStartTime) / 1000);
-  if (current >= infoQuestions.length) {
-    questionTimes.push(timedOut ? TIME_LIMIT : Math.min(timeSpent, TIME_LIMIT));
-  }
-  const ans = timedOut || answerEl.value.trim() === ''
-    ? "Failure to provide an answer within the time limit."
-    : answerEl.value.trim();
-  answers.push(ans);
-  current++;
-  loadQuestion();
-}
-
-function formatTime(seconds) {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 function sendToDiscord() {
-  const robloxUser = answers[0] && answers[0] !== "Failure to provide an answer within the time limit." 
-    ? answers[0] 
-    : "Unknown User";
+  const user = window.linkedUser;
+  const robloxUser = answers[0] || "Unknown User";
   
-  const infoLabels = ["Roblox username", "Discord username", "Discord ID"];
   let content = `👤 **Examinee Information**\n`;
-  
-  for (let i = 0; i < infoLabels.length; i++) {
-    content += `**${infoLabels[i]}:** ${answers[i] || "N/A"}\n\n`;
-  }
-
+  content += `**Roblox Username:** ${robloxUser}\n`;
+  content += `**Discord Account:** ${user ? user.username : "Not Linked"}\n`;
+  content += `**Discord ID:** ${user ? user.id : "N/A"}\n\n`;
   content += `➡️ **Responses**\n\n`;
-  
-  mainQuestions.forEach((q, i) => {
-    const answerIndex = infoQuestions.length + i;
-    const answer = answers[answerIndex] || "Failure to provide an answer within the time limit.";
-    content += `**Q${i+1}:** ${q}\n────────────────────────\n${answer}\n\n`;
-  });
 
-  const payload = {
-    username: robloxUser,
-    content: content
-  };
+  mainQuestions.forEach((q, i) => {
+    const ans = answers[i + 1] || "No response provided.";
+    content += `**Q${i+1}:** ${q}\n────────────────────────\n${ans}\n\n`;
+  });
 
   fetch(WORKER_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  })
-  .then(res => {
-    if (res.ok) console.log("Sent");
-  })
-  .catch(err => console.error(err));
+    body: JSON.stringify({
+      username: robloxUser,
+      content: content,
+      avatar: user ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : null,
+      discordTag: user ? user.username : "Unknown"
+    })
+  });
 }
-
-loadQuestion();
 </script>
 </body>
 </html>
