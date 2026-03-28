@@ -48,7 +48,7 @@
     </div>
   </div>
   <div class="notice-card" id="notice">
-    <span class="glow-text">Verification Step 1/2</span><br>Link Discord to begin authentication.
+    <span class="glow-text">Clan Labs Verification</span><br>Link Discord to fetch your clan profile.
   </div>
   <div class="meta-row">
     <div class="progress" id="progress">Locked</div>
@@ -68,7 +68,6 @@
 <script>
 const WORKER_URL = "https://server.yyourmom96.workers.dev";
 const D_CLIENT = '1487244125488152589';
-const R_CLIENT = '1487244125488152589'; 
 const REDIRECT = window.location.href.split('#')[0];
 const TIME_LIMIT = 120;
 
@@ -79,31 +78,31 @@ function loginDiscord() {
     window.location.href = `https://discord.com/oauth2/authorize?client_id=${D_CLIENT}&redirect_uri=${encodeURIComponent(REDIRECT)}&response_type=token&scope=identify`;
 }
 
-function loginRoblox() {
-    window.location.href = `https://apis.roblox.com/oauth/v1/authorize?client_id=${R_CLIENT}&redirect_uri=${encodeURIComponent(REDIRECT)}&scope=openid%20profile&response_type=token&nonce=123`;
-}
-
 window.onload = () => {
-    const params = new URLSearchParams(window.location.hash.slice(1));
-    const token = params.get('access_token');
-    if (token) {
-        if (!localStorage.getItem('d_token')) {
-            fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
-            .then(res => res.json()).then(user => {
-                localStorage.setItem('d_token', token);
-                window.dUser = user;
-                document.getElementById('notice').innerHTML = `<span class="glow-text">Verification Step 2/2</span><br>Discord Verified: ${user.username}`;
-                document.getElementById('question').innerHTML = `<button class="action-btn" onclick="loginRoblox()">Link Roblox Account</button>`;
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const dToken = hashParams.get('access_token');
+
+    if (dToken) {
+        document.getElementById('question').innerHTML = `<div class="glow-text">Checking Clan Labs...</div>`;
+        fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${dToken}` } })
+        .then(res => res.json()).then(user => {
+            window.dUser = user;
+            return fetch(WORKER_URL, {
+                method: "POST",
+                body: JSON.stringify({ type: "CLANLABS_VERIFY", discordId: user.id })
             });
-        } else {
-            fetch('https://apis.roblox.com/oauth/v1/userinfo', { headers: { Authorization: `Bearer ${token}` } })
-            .then(res => res.json()).then(data => {
-                window.rUser = data.preferred_username || data.name;
-                document.getElementById('notice').innerHTML = `<span class="glow-text">Identity Confirmed</span><br>Welcome, ${window.rUser}`;
+        })
+        .then(res => res.json()).then(data => {
+            if (data.error) {
+                document.getElementById('notice').innerHTML = `<span style="color:#ff69b4;">Verification Failed</span><br>${data.error}`;
+                document.getElementById('question').innerHTML = `<button class="action-btn" onclick="loginDiscord()">Retry</button>`;
+            } else {
+                window.rUser = data.username;
+                document.getElementById('notice').innerHTML = `<span class="glow-text">Identity Confirmed</span><br>Roblox: ${window.rUser}`;
                 document.getElementById('question').innerHTML = `<button class="action-btn" onclick="startExam()">Start Examination</button>`;
                 document.getElementById('progress').innerText = "Ready";
-            });
-        }
+            }
+        });
     }
 };
 
@@ -137,7 +136,7 @@ function startTimer() {
         const mins = Math.floor(secondsLeft / 60); const secs = secondsLeft % 60;
         document.getElementById('timer').innerText = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`;
         if (secondsLeft <= 0) { 
-            answers[current] = document.getElementById('answer').value.trim() || "[TIME EXPIRED - NO RESPONSE]";
+            answers[current] = document.getElementById('answer').value.trim() || "[TIME EXPIRED]";
             current++; 
             loadQuestion(); 
         }
@@ -157,22 +156,25 @@ function showReview() {
     mainQuestions.forEach((q, i) => {
         html += `<div class="review-item" onclick="jumpTo(${i})"><div class="review-q">Q${i+1}</div><div class="review-a">${answers[i]}</div></div>`;
     });
-    html += `</div><button class="action-btn" onclick="finalSubmit()" style="margin-top:15px; border-color:#ff69b4; color:#ff69b4;">Submit</button>`;
+    html += `</div><button class="action-btn" onclick="finalSubmit()" style="margin-top:15px; border-color:#ff69b4; color:#ff69b4;">Submit Final</button>`;
     document.getElementById('question').innerHTML = html;
 }
 
 function jumpTo(index) { current = index; document.getElementById('input-area').style.display = 'flex'; loadQuestion(); }
 
 function finalSubmit() {
-    document.getElementById('question').innerHTML = `<div class="glow-text">Submitting...</div>`;
-    let content = `**Roblox**: ${window.rUser}\n**Discord**: ${window.dUser?.username || 'Verified'}\n\n`;
+    document.getElementById('question').innerHTML = `<div class="glow-text">Uploading...</div>`;
+    let content = `**Roblox**: ${window.rUser}\n**Discord**: ${window.dUser?.username}\n\n`;
     mainQuestions.forEach((q, i) => { content += `**Q${i+1}:** ${q}\n> ${answers[i]}\n\n`; });
     fetch(WORKER_URL, {
         method: "POST",
-        body: JSON.stringify({ username: window.rUser, content, avatar: "https://i.imgur.com/mWDOZI5.png" })
+        body: JSON.stringify({ 
+            username: window.rUser, 
+            content, 
+            avatar: window.dUser ? `https://cdn.discordapp.com/avatars/${window.dUser.id}/${window.dUser.avatar}.png` : "https://i.imgur.com/mWDOZI5.png" 
+        })
     }).then(() => {
-        localStorage.clear();
-        document.getElementById('question').innerHTML = `<div class="glow-text" style="font-size:24px;">✅ Submitted</div>`;
+        document.getElementById('question').innerHTML = `<div class="glow-text" style="font-size:24px;">✅ Complete</div>`;
     });
 }
 </script>
