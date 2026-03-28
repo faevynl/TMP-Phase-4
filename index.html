@@ -41,6 +41,7 @@
     position: relative;
     overflow: hidden;
   }
+
   .header::before {
     content: '';
     position: absolute;
@@ -50,10 +51,12 @@
     background-size: 200% 100%;
     animation: shimmer 3s linear infinite;
   }
+
   @keyframes shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
   }
+
   .header-logo {
     width: 48px;
     height: 48px;
@@ -62,7 +65,7 @@
     border: 1px solid rgba(255,105,180,0.4);
     flex-shrink: 0;
   }
-  .header-text { flex: 1; }
+
   .header-title {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
@@ -70,6 +73,7 @@
     color: #fff;
     letter-spacing: 1px;
   }
+
   .header-subtitle {
     font-size: 12px;
     color: #00dcff;
@@ -87,19 +91,31 @@
     font-size: 12px;
     text-align: center;
     line-height: 1.6;
-    transition: all 0.5s;
   }
-  .notice-card.hidden { opacity: 0; max-height: 0; padding: 0; margin: 0; border: none; overflow: hidden; }
+
+  .glow-text {
+    color: #00dcff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: text-pulse 2s infinite ease-in-out;
+  }
+
+  @keyframes text-pulse {
+    0%, 100% { text-shadow: 0 0 5px rgba(0, 220, 255, 0.3); opacity: 0.8; }
+    50% { text-shadow: 0 0 15px rgba(0, 220, 255, 0.9), 0 0 25px rgba(0, 220, 255, 0.5); opacity: 1; color: #fff; }
+  }
 
   .meta-row { display: flex; justify-content: space-between; align-items: center; }
+
   .progress {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 600;
     font-size: 13px;
     color: #ff69b4;
-    letter-spacing: 1px;
     text-transform: uppercase;
   }
+
   .timer {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
@@ -107,8 +123,6 @@
     color: #00dcff;
     display: none;
   }
-  .timer.warning { color: #ff4444; animation: pulse 0.8s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
   .progress-bar-track {
     width: 100%; height: 3px;
@@ -116,6 +130,7 @@
     border-radius: 2px;
     overflow: hidden;
   }
+
   .progress-bar-fill {
     height: 100%; width: 0%;
     background: linear-gradient(90deg, #ff69b4, #00dcff);
@@ -134,7 +149,6 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    box-shadow: 0 0 30px rgba(255, 105, 180, 0.05);
   }
 
   #input-area { display: none; gap: 10px; margin-top: 10px; }
@@ -143,60 +157,39 @@
     flex: 1; padding: 13px 16px; border-radius: 12px;
     border: 1px solid rgba(255, 105, 180, 0.35);
     background: #0d0d0d; color: #fff;
-    font-family: 'Inter', sans-serif;
     outline: none;
-    transition: outline 0.1s ease-in-out;
-  }
-  #answer:focus {
-    outline: 2px solid #00dcff !important;
-    border-color: #00dcff;
   }
 
+  #answer:focus { outline: 2px solid #00dcff !important; border-color: #00dcff; }
+
   .action-btn {
-    padding: 14px 28px;
-    border-radius: 12px;
+    padding: 14px 28px; border-radius: 12px;
     border: 1px solid rgba(0, 220, 255, 0.5);
     background: rgba(0, 220, 255, 0.1);
-    color: #00dcff;
-    cursor: pointer;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    transition: all 0.3s;
+    color: #00dcff; cursor: pointer;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    text-transform: uppercase; transition: 0.3s;
   }
-  .action-btn:hover {
-    background: #00dcff; color: #000;
-    box-shadow: 0 0 20px rgba(0, 220, 255, 0.4);
-  }
+
+  .action-btn:hover { background: #00dcff; color: #000; box-shadow: 0 0 20px rgba(0, 220, 255, 0.4); }
 
   #sendBtn {
     padding: 13px 22px; border-radius: 12px; border: 1px solid #ff69b4;
     background: transparent; color: #fff; cursor: pointer;
     font-family: 'Rajdhani', sans-serif; font-weight: 700;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-  }
-  #sendBtn:hover {
-    background: linear-gradient(90deg, #ff69b4, #00dcff) !important;
-    color: #000 !important;
-    border-color: transparent !important;
-    box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
+    text-transform: uppercase; transition: 0.3s;
   }
 
-  .start-btn {
-    border-color: rgba(255, 105, 180, 0.5);
-    background: rgba(255, 105, 180, 0.1);
-    color: #ff69b4;
+  #sendBtn:hover {
+    background: linear-gradient(90deg, #ff69b4, #00dcff) !important;
+    color: #000 !important; border-color: transparent !important;
   }
-  .start-btn:hover {
-    background: #ff69b4; color: #000;
-    box-shadow: 0 0 20px rgba(255, 105, 180, 0.4);
-  }
+
+  .start-btn { border-color: rgba(255, 105, 180, 0.5); background: rgba(255, 105, 180, 0.1); color: #ff69b4; }
+  .start-btn:hover { background: #ff69b4; color: #000; }
 </style>
 </head>
 <body>
-
 <div id="app">
   <div class="header">
     <img src="https://i.imgur.com/mWDOZI5.png" class="header-logo" alt="Logo">
@@ -205,161 +198,92 @@
       <div class="header-subtitle">Phase 4 · Written Assessment</div>
     </div>
   </div>
-
   <div class="notice-card" id="notice">
-    Verification Required<br>
+    <span class="glow-text">Verification Required</span><br>
     Click below to link your Discord account. This is required to start.
   </div>
-
   <div class="meta-row">
     <div class="progress" id="progress">Awaiting Link...</div>
     <div class="timer" id="timer">⏱ 2:00</div>
   </div>
-
-  <div class="progress-bar-track">
-    <div class="progress-bar-fill" id="progressBar"></div>
-  </div>
-
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBar"></div></div>
   <div id="question" class="question-card">
     <button id="discordBtn" class="action-btn" onclick="loginWithDiscord()">Link Discord Account</button>
     <button id="startBtn" class="action-btn start-btn" onclick="startExam()" style="display:none;">Start Examination</button>
   </div>
-
   <div id="input-area">
     <input type="text" id="answer" placeholder="Type your answer here...">
     <button id="sendBtn">Submit</button>
   </div>
 </div>
-
 <script>
 const WORKER_URL = "https://server.yyourmom96.workers.dev";
 const CLIENT_ID = '1487244125488152589';
 const REDIRECT_URI = window.location.href.split('#')[0];
 const TIME_LIMIT = 120;
-
-let current = 0;
-let answers = [];
-let timerInterval = null;
-let secondsLeft = TIME_LIMIT;
-window.linkedUser = null;
-
+let current = 0; let answers = []; let timerInterval = null; let secondsLeft = TIME_LIMIT; window.linkedUser = null;
 const infoQuestions = ["Enter your Roblox username:"];
-let mainQuestions = []; 
-let allQuestions = [...infoQuestions];
+let mainQuestions = []; let allQuestions = [...infoQuestions];
 
 function loginWithDiscord() {
-    const url = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
-    window.location.href = url;
+    window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
 }
 
 window.onload = () => {
-    const hash = window.location.hash.slice(1);
-    const params = new URLSearchParams(hash);
-    const urlToken = params.get('access_token');
-    const savedToken = localStorage.getItem('discord_token');
-    const activeToken = urlToken || savedToken;
-
-    if (activeToken) {
-        validateDiscordUser(activeToken);
-    }
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const token = params.get('access_token') || localStorage.getItem('discord_token');
+    if (token) validateDiscordUser(token);
 };
 
 function validateDiscordUser(token) {
-    fetch('https://discord.com/api/users/@me', {
-        headers: { Authorization: `Bearer ${token}` }
-    })
-    .then(res => {
-        if (!res.ok) throw new Error();
-        return res.json();
-    })
+    fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } })
+    .then(res => res.json())
     .then(user => {
         localStorage.setItem('discord_token', token);
         window.linkedUser = user;
-        document.getElementById('notice').innerText = `Linked as: ${user.username} (${user.id})`;
+        document.getElementById('notice').innerHTML = `<span class="glow-text">Verified</span><br>${user.username}`;
         document.getElementById('discordBtn').style.display = 'none';
         document.getElementById('startBtn').style.display = 'block';
         document.getElementById('progress').innerText = "Account Verified";
-        window.history.replaceState({}, document.title, REDIRECT_URI);
-    })
-    .catch(() => {
-        localStorage.removeItem('discord_token');
-        document.getElementById('notice').innerText = "Session expired. Please link Discord again.";
-        document.getElementById('discordBtn').style.display = 'block';
-        document.getElementById('startBtn').style.display = 'none';
     });
 }
 
 async function startExam() {
-    if (!window.linkedUser) return alert("Please link your Discord first!");
-    
-    document.getElementById('startBtn').innerText = "LOADING...";
-    document.getElementById('startBtn').disabled = true;
-
     try {
         const response = await fetch(WORKER_URL);
         const data = await response.json();
         mainQuestions = data.questions;
         allQuestions = [...infoQuestions, ...mainQuestions];
-
         document.getElementById('startBtn').style.display = 'none';
-        document.getElementById('notice').classList.add('hidden');
+        document.getElementById('notice').style.display = 'none';
         document.getElementById('input-area').style.display = 'flex';
         loadQuestion();
-    } catch (e) {
-        alert("Failed to load questions from server. Please refresh.");
-        document.getElementById('startBtn').innerText = "Start Examination";
-        document.getElementById('startBtn').disabled = false;
-    }
+    } catch (e) { alert("Server Error."); }
 }
 
 function loadQuestion() {
-    if (current >= allQuestions.length) {
-        finishExam();
-        return;
-    }
-    const pct = (current / allQuestions.length) * 100;
-    document.getElementById('progressBar').style.width = pct + '%';
+    if (current >= allQuestions.length) { finishExam(); return; }
+    document.getElementById('progressBar').style.width = (current / allQuestions.length) * 100 + '%';
     document.getElementById('progress').innerText = `Question ${current + 1} / ${allQuestions.length}`;
     document.getElementById('question').innerText = allQuestions[current];
     document.getElementById('answer').value = '';
     document.getElementById('answer').focus();
-
-    if (current >= infoQuestions.length) {
-        document.getElementById('timer').style.display = 'block';
-        startTimer();
-    } else {
-        document.getElementById('timer').style.display = 'none';
-        clearInterval(timerInterval);
-    }
+    if (current >= infoQuestions.length) { document.getElementById('timer').style.display = 'block'; startTimer(); }
 }
 
 function startTimer() {
-    clearInterval(timerInterval);
-    secondsLeft = TIME_LIMIT;
-    updateTimerDisplay();
+    clearInterval(timerInterval); secondsLeft = TIME_LIMIT;
     timerInterval = setInterval(() => {
         secondsLeft--;
-        updateTimerDisplay();
-        if (secondsLeft <= 0) {
-            clearInterval(timerInterval);
-            nextQuestion(true);
-        }
+        const mins = Math.floor(secondsLeft / 60); const secs = secondsLeft % 60;
+        document.getElementById('timer').innerText = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`;
+        if (secondsLeft <= 0) nextQuestion(true);
     }, 1000);
 }
 
-function updateTimerDisplay() {
-    const mins = Math.floor(secondsLeft / 60);
-    const secs = secondsLeft % 60;
-    const el = document.getElementById('timer');
-    el.innerText = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`;
-    el.className = 'timer' + (secondsLeft <= 30 ? ' warning' : '');
-}
-
 function nextQuestion(timedOut = false) {
-    const val = document.getElementById('answer').value.trim();
-    answers.push(timedOut ? "Timed Out" : (val || "N/A"));
-    current++;
-    loadQuestion();
+    answers.push(timedOut ? "Timed Out" : (document.getElementById('answer').value.trim() || "N/A"));
+    current++; loadQuestion();
 }
 
 document.getElementById('sendBtn').onclick = () => nextQuestion(false);
@@ -369,36 +293,19 @@ function finishExam() {
     clearInterval(timerInterval);
     document.getElementById('timer').style.display = 'none';
     document.getElementById('input-area').style.display = 'none';
-    document.getElementById('progressBar').style.width = '100%';
-    document.getElementById('question').innerHTML = `<div style="font-size:20px; font-weight:700; color:#00dcff;">SUBMITTING DATA...</div>`;
-    sendToDiscord();
-}
+    document.getElementById('question').innerHTML = `<div class="glow-text">Submitting Data...</div>`;
+    
+    const user = window.linkedUser;
+    let content = `**Roblox**: ${answers[0]}\n**Discord**: ${user.username}\n\n`;
+    mainQuestions.forEach((q, i) => { content += `**Q${i+1}:** ${q}\n> ${answers[i+1]}\n\n`; });
 
-function sendToDiscord() {
-  const user = window.linkedUser;
-  const robloxName = answers[0] || "Unknown";
-  let content = `📋 **Examinee Info**\n__Roblox__: ${robloxName}\n__Discord__: ${user.username}\n__ID__: ${user.id}\n\n**Responses**\n\n`;
-
-  mainQuestions.forEach((q, i) => {
-    content += `**Q${i+1}:** ${q}\n────────────\n${answers[i+1] || "No Answer"}\n\n`;
-  });
-
-  fetch(WORKER_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      username: robloxName,
-      content: content,
-      avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://i.imgur.com/mWDOZI5.png",
-      tag: user.username
-    })
-  }).then(() => {
-    document.getElementById('question').innerHTML = `
-      <div style="font-size:40px;">✅</div>
-      <div style="font-family:Rajdhani; font-weight:700; font-size:24px; color:#00dcff;">SUBMITTED</div>
-      <div style="color:#99b4c0; font-size:13px; margin-top:10px;">Your exam has been logged successfully.</div>
-    `;
-  });
+    fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: answers[0], content, avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`, tag: user.username })
+    }).then(() => {
+        document.getElementById('question').innerHTML = `<div class="glow-text" style="font-size:24px;">✅ Submitted Successfully</div>`;
+    });
 }
 </script>
 </body>
