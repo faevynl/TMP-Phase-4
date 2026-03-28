@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TMP Phase 4 | Written Assessment</title>
+
+<!-- Open Graph / Discord Embed -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="TMP Phase 4 · Written Assessment">
+<meta property="og:description" content="Complete your Phase 4 Written Assessment. Link your Discord account to begin.">
+<meta property="og:image" content="https://i.imgur.com/mWDOZI5.png">
+<meta name="theme-color" content="#00dcff">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
@@ -22,7 +29,7 @@
   .timer { font-family: 'Rajdhani', sans-serif; font-weight: 700; color: #00dcff; display: none; }
   .progress-bar-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; }
   .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff69b4, #00dcff); transition: width 0.4s; }
-  .question-card { background: #0d0d0d; border: 1px solid rgba(255, 105, 180, 0.3); border-radius: 16px; padding: 40px 24px; color: #f0f0f0; min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .question-card { background: #0d0d0d; border: 1px solid rgba(255, 105, 180, 0.3); border-radius: 16px; padding: 24px; color: #f0f0f0; min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
   .review-container { text-align: left; width: 100%; max-height: 380px; overflow-y: auto; }
   .review-item { margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; cursor: pointer; }
   .review-q { font-size: 10px; color: #00dcff; text-transform: uppercase; }
@@ -31,7 +38,10 @@
   #answer { width: 100%; min-height: 120px; padding: 14px; border-radius: 12px; border: 1px solid rgba(255, 105, 180, 0.3); background: #0d0d0d; color: #fff; outline: none; resize: none; -webkit-user-select: text; user-select: text; }
   #answer.single-line { min-height: unset; height: 48px; resize: none; }
   .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(0, 220, 255, 0.5); background: rgba(0, 220, 255, 0.1); color: #00dcff; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; transition: 0.2s; }
-  .action-btn:hover { background: #00dcff; color: #000; }
+  .action-btn:hover { background: linear-gradient(90deg, #ff69b4, #00dcff); color: #000; border-color: transparent; }
+  .info-pill { font-size: 12px; color: #99b4c0; border-radius: 8px; padding: 10px 14px; }
+  .info-pill.cyan { background: rgba(0,220,255,0.05); border: 1px solid rgba(0,220,255,0.15); }
+  .info-pill.pink { background: rgba(255,105,180,0.05); border: 1px solid rgba(255,105,180,0.15); }
   .credit-text { font-family: 'Rajdhani', sans-serif; font-size: 10px; color: rgba(255, 255, 255, 0.2); text-align: center; margin-top: 15px; letter-spacing: 2px; }
 </style>
 </head>
@@ -56,7 +66,7 @@
     <button id="authBtn" class="action-btn" onclick="loginDiscord()">Link Discord Account</button>
   </div>
   <div id="input-area">
-    <textarea id="answer" placeholder="Type answer here..." onpaste="return false;" oncopy="return false;" oncut="return false;"></textarea>
+    <textarea id="answer" placeholder="Type answer here..." onpaste="return false;" oncopy="return false;" oncut="return false;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();nextQuestion();}"></textarea>
     <button class="action-btn" onclick="nextQuestion()" style="border-color:#ff69b4; color:#ff69b4;">Submit Answer</button>
   </div>
   <div id="credit" class="credit-text">CREATED BY FAEVYNL</div>
@@ -73,6 +83,25 @@ function loginDiscord() {
     window.location.href = `https://discord.com/oauth2/authorize?client_id=${D_CLIENT}&redirect_uri=${encodeURIComponent(REDIRECT)}&response_type=token&scope=identify`;
 }
 
+function showInstructions() {
+    document.getElementById('notice').innerHTML = `<span class="glow-text">Discord Verified</span><br>${window.dUser.username}`;
+    document.getElementById('question').innerHTML = `
+        <div style="text-align:left; width:100%;">
+            <div style="font-family:'Rajdhani',sans-serif; font-size:17px; font-weight:700; color:#ff69b4; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; text-align:center;">
+                Congratulations, Manager on Trial
+            </div>
+            <div style="font-size:13px; color:#b0c8d4; line-height:1.75; margin-bottom:16px;">
+                You've made it to <span style="color:#00dcff; font-weight:600;">Phase 4</span> of The Management Program. This written assessment is designed to evaluate the knowledge and judgment you've developed throughout your training.
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:18px;">
+                <div class="info-pill cyan">📖 <span style="color:#fff; font-weight:500;">Open Book</span> — You may reference any materials during this exam.</div>
+                <div class="info-pill pink">⏱ <span style="color:#fff; font-weight:500;">2 Minutes Per Question</span> — Each question has a strict time limit. Be clear and concise.</div>
+                <div class="info-pill cyan">✏️ <span style="color:#fff; font-weight:500;">Final Review</span> — You'll be able to review and edit all answers before submitting.</div>
+            </div>
+            <button class="action-btn" onclick="startExam()">Begin Examination</button>
+        </div>`;
+}
+
 window.onload = () => {
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
     const dToken = hashParams.get('access_token');
@@ -81,8 +110,7 @@ window.onload = () => {
         fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${dToken}` } })
         .then(res => res.json()).then(user => {
             window.dUser = user;
-            document.getElementById('notice').innerHTML = `<span class="glow-text">Discord Verified</span><br>${window.dUser.username}`;
-            document.getElementById('question').innerHTML = `<button class="action-btn" onclick="startExam()">Start Written Exam</button>`;
+            showInstructions();
         }).catch(() => {
             document.getElementById('notice').innerHTML = `<span style="color:red;">Verification Failed</span><br>Please try again.`;
             document.getElementById('question').innerHTML = `<button class="action-btn" onclick="loginDiscord()">Try Again</button>`;
