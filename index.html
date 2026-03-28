@@ -139,18 +139,18 @@
 
   #input-area { display: none; gap: 10px; margin-top: 10px; }
 
+  /* CYAN OUTLINE FIX FOR ALL INPUTS */
   #answer {
     flex: 1; padding: 13px 16px; border-radius: 12px;
     border: 1px solid rgba(255, 105, 180, 0.35);
     background: #0d0d0d; color: #fff;
     font-family: 'Inter', sans-serif;
-    outline: none;
-    transition: all 0.2s ease;
+    outline: none; /* Reset standard outline */
+    transition: outline 0.1s ease-in-out;
   }
   #answer:focus {
-    outline: 2px solid #00dcff;
-    box-shadow: 0 0 10px rgba(0, 220, 255, 0.2);
-    border-color: transparent;
+    outline: 2px solid #00dcff !important;
+    border-color: #00dcff;
   }
 
   .action-btn {
@@ -170,6 +170,22 @@
     background: #00dcff; color: #000;
     box-shadow: 0 0 20px rgba(0, 220, 255, 0.4);
   }
+
+  /* SUBMIT BUTTON GRADIENT HOVER FIX */
+  #sendBtn {
+    padding: 13px 22px; border-radius: 12px; border: 1px solid #ff69b4;
+    background: transparent; color: #fff; cursor: pointer;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+  }
+  #sendBtn:hover {
+    background: linear-gradient(90deg, #ff69b4, #00dcff) !important;
+    color: #000 !important;
+    border-color: transparent !important;
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
+  }
+
   .start-btn {
     border-color: rgba(255, 105, 180, 0.5);
     background: rgba(255, 105, 180, 0.1);
@@ -178,22 +194,6 @@
   .start-btn:hover {
     background: #ff69b4; color: #000;
     box-shadow: 0 0 20px rgba(255, 105, 180, 0.4);
-  }
-
-  /* FIX: Submit Button Gradient Hover */
-  #sendBtn {
-    padding: 13px 22px; border-radius: 12px; border: 1px solid #ff69b4;
-    background: transparent; color: #fff; cursor: pointer;
-    font-family: 'Rajdhani', sans-serif; font-weight: 700;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  #sendBtn:hover {
-    background: linear-gradient(90deg, #ff69b4, #00dcff);
-    color: #000;
-    border-color: transparent;
-    box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
   }
 </style>
 </head>
@@ -329,6 +329,9 @@ function loadQuestion() {
     if (current >= infoQuestions.length) {
         document.getElementById('timer').style.display = 'block';
         startTimer();
+    } else {
+        document.getElementById('timer').style.display = 'none';
+        clearInterval(timerInterval);
     }
 }
 
